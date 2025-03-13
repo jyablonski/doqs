@@ -1,0 +1,49 @@
+name: Build and Deploy to S3
+
+on:
+  push:
+    branches:
+      - main  # Change this if your deployment branch is different
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.IAM_ROLE }}
+          role-session-name: github-doqs-cicd
+          aws-region: us-east-1
+
+      - name: Upload to S3
+        run: aws s3 sync ./dist/ s3://${{ secrets.BUCKET_NAME }}
+
+  deploy-alert:
+    needs: build-and-deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_MESSAGE: 'Doqs Deployed to Production'
+          SLACK_TITLE: Deploy Pipeline
+          SLACK_USERNAME: Doqs
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
