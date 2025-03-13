@@ -1,7 +1,7 @@
 ---
 title: Resetting AWS Account
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-03-13 04:14:32Z
+lastUpdated: 2025-03-13 23:41:29Z
 ---
 
 This doc walks through how to reset the AWS Account used for the NBA Project.
