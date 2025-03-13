@@ -5,6 +5,10 @@ on:
     branches:
       - main  # Change this if your deployment branch is different
 
+permissions:
+      id-token: write
+      contents: read    # This is required for actions/checkout
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
