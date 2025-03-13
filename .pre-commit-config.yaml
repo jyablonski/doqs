@@ -1,0 +1,8 @@
+repos:
+  - repo: local
+    hooks:
+      - id: update-last-updated
+        name: Update lastUpdated field in Markdown files
+        entry: bash .github/hooks/update_last_updated.sh
+        language: system
+        types: [text]
