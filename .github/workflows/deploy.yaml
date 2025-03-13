@@ -1,0 +1,42 @@
+name: Build and Deploy to S3
+
+on:
+  push:
+    branches:
+      - main  # Change this if your deployment branch is different
+
+env:
+  BUCKET_NAME : ${{ secrets.AWS_BUCKET }}
+  IAM_ROLE: ${{ secrets.IAM_ROLE }}
+  AWS_REGION : "us-east-1"
+  PYTHON_VERSION: "3.11"
+
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.IAM_ROLE }}
+          role-session-name: doqscicd
+          aws-region: us-east-1
+
+      - name: Upload to S3
+        run: aws s3 sync ./dist/ s3://your-s3-bucket-name
