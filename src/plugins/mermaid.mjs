@@ -1,5 +1,7 @@
 import { visit } from 'unist-util-visit'
 
+// this code is imported in `astro.config.mjs` and
+// enables the use of mermaid diagrams
 export function remarkDiagram() {
   return function (tree, { data }) {
     if (!data.astro.frontmatter['extra']) {

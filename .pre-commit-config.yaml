@@ -6,4 +6,4 @@ repos:
         entry: bash .github/hooks/update_last_updated.sh
         language: system
         types: [text]
-        files: \.md$
+        files: ".*\\.md$"
