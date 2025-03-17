@@ -10,7 +10,7 @@ permissions:
       contents: read
 
 jobs:
-  build-and-deploy:
+  deploy-pipeline:
     runs-on: ubuntu-latest
 
     steps:
@@ -39,7 +39,7 @@ jobs:
         run: aws s3 sync ./dist/ s3://${{ secrets.BUCKET_NAME }}
 
   deploy-alert:
-    needs: build-and-deploy
+    needs: deploy-pipeline
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
