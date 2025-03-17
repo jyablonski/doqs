@@ -1,13 +1,13 @@
-name: Build and Deploy to S3
+name: Deploy Pipeline
 
 on:
   push:
     branches:
-      - main  # Change this if your deployment branch is different
+      - main
 
 permissions:
       id-token: write
-      contents: read    # This is required for actions/checkout
+      contents: read
 
 jobs:
   build-and-deploy:

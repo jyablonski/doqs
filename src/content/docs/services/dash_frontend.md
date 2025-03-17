@@ -1,27 +1,28 @@
 ---
-title: Ingestion Script
+title: Dash Frontend
 description: A reference page in my new Starlight docs site.
 lastUpdated: 2025-03-17 23:32:49Z
 ---
 
-The Ingestion Script is responsible for all source data ingestion for the NBA ELT Project
+
+The xxx Service is yyy
 
 ## Architecture
 
 ``` mermaid
 graph LR
-    A[Basketball-Reference] --> INGEST[Ingestion Script]
-    B[DraftKings] --> INGEST
-    C[Reddit] --> INGEST
-    INGEST --> DB[Postgres Database]
+    User[User-Facing Traffic] --> ALB[Application Load Balancer]
+    ALB -->|Routes Traffic| DASH[Dash Frontend Service]
+    DB[Postgres Database] --> DASH
+    subgraph VPC[AWS VPC]
+        ALB
+        DB
+        subgraph ECSBox[ECS]
+            DASH
+        end
+    end
 
-```
-
-### ELT Pipeline Orchestration
-``` mermaid
-graph LR
-    A[Ingestion Script] --> B[dbt]
-    B --> C[ML Pipeline]
+  style VPC fill:#89888f,stroke:#444444,stroke-width:2px
 ```
 
 ## Code Layout
@@ -52,14 +53,19 @@ The project follows a structured directory layout to maintain a clean and organi
 
 ## Libraries
 
-1. Pandas is the primary package driving the REST API development
-2. beautifulsoup4 enables web-scraping to be performed on various basketball-reference and draftkings pages
-3. praw is used to authenticate to & pull data from the Reddit API
-4. nltk provides Sentiment Analysis Functions to be applied on various social media text data
-5. jyablonski_common_modules provides various functions to read & write data to Postgres
+1. dash is the primary package driving the frontend application development
+2. Pandas is used to store all data from database to serve throughout various graphs, plots, and tables
+3. dash-bootstrap-components is used to provide template objects to help build out the UI
 
 ## Production
 
+The Dash Frontend is hosted on ECS, which is connected to an EC2 instance managed by an Auto Scaling Group (ASG), ensuring at least one EC2 instance is always running to support the ECS service. 
+
+- This utilizes the 1 free EC2 t3.micro instance that free-tier accounts are alotted per month
+
+This is further connected to an Application Load Balancer (ALB), which is configured with Route 53 to route traffic to the ECS service at https://nbadashboard.jyablonski.dev.
+
+- Since February 2024, ALBs have IPv4 charges even on free-tier accounts, so this costs about $12 / month to support
 
 
 ## CI / CD
@@ -70,5 +76,6 @@ After a PR is merged, the continuous deployment (CD) pipeline performs the follo
 
 1. Builds the Docker Image for the service which has the updated source code & dependencies
 2. Pushes the Docker Image to ECR
+3. Restarts the ECS Nodes that run the ECS Service so that they pull & serve the updated Docker Image
 
-On the next subsequent NBA ELT Pipeline run, this new Docker Image will be used when the Ingestion Script is scheduled to be ran in ECS
+- **NOTE** For larger projects a more sophisticated deployment process would be ideal here like blue / green or a rolling deploy, but this process is simply enough to support the low traffic

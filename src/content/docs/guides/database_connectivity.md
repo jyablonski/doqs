@@ -1,7 +1,7 @@
 ---
 title: Database Connectivity
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-03-13 23:41:29Z
+lastUpdated: 2025-03-17 23:32:49Z
 ---
 
 Guides lead a user through a specific task they want to accomplish, often with a sequence of steps.

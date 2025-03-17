@@ -19,6 +19,8 @@ export default defineConfig({
 				},
 			],
 			title: 'Doqs',
+			// remove the previous + next page links on all pages
+			pagination: false, 
 			favicon: './src/assets/logo.png',
 			logo: {
 				src: './src/assets/logo.png',
@@ -31,6 +33,7 @@ export default defineConfig({
 				{
 					label: 'Data Sources',
 					autogenerate: { directory: 'data' },
+					collapsed: true,
 				},
 				{
 					label: 'Diagrams',
