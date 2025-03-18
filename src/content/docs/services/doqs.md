@@ -18,56 +18,31 @@ graph LR
 
 ```
 
-Hover event triggers a prefetch:
+## How It Works
 
-Astro/Starlight starts fetching the page data or HTML.
-That's why you see the first server log (e.g., /services/dbt/ 13ms) just by hovering.
-Click event triggers a full navigation:
+Astro Starlight is a theme and framework built on top of Astro, designed specifically for creating modern, fast, and customizable documentation websites. It leverages Astro’s component-based architecture and static site generation capabilities to deliver highly performant docs. It ships with a default template and a handful of prebuilt components to allow various customization.
 
-After you click, the router proceeds with navigation (or hydration), but since part of the page is preloaded, it’s faster.
-The second log you see is the actual page load completing after the click.
+During build time, Astro compiles all .md files into static HTML, CSS, and JS.
 
-## Code Layout
+- It leverages partial hydration, so only interactive components ship JavaScript to the browser, keeping most pages fast and lightweight.
+- These static files can then be used to host a static web app on something like Netlify, GitHub Pages, or S3
 
-The project follows a structured directory layout to maintain a clean and organized codebase. Below is a breakdown of each directory and its purpose:
-
-### `.github/`
-- Contains CI/CD configuration files for continuous integration and deployment processes (e.g., GitHub Actions workflows).
-
-### `docker/`
-- Stores all Docker-related files such as `Dockerfile` and `docker-compose.yml` used for testing and local development environments.
-
-### `tests/`
-- Contains all the test cases for the project. The tests are organized into the following categories:
-  - unit/: Contains unit tests for individual functions (e.g., `generate_salt`).
-  - integration/: Contains integration tests that involve interactions with external systems (e.g., PostgreSQL, Redis, API endpoints).
-
-### `src/`
-- Contains the application code that implements the core functionality of the project. Key files and subdirectories include:
-  - dao/: Contains all SQL-related code such as queries, database interactions, and data access objects (DAOs). This is where most of the database logic should reside.
-  - server.py: The main server file that initializes and runs the application. It typically contains the application setup and the entry point for the API server.
-  - models.py: Defines the SQLAlchemy ORM models for the application, where all the database tables and relationships are specified.
-  - security.py: Contains code related to security and JWT (JSON Web Token) authentication. This file handles user authentication, authorization, and token generation/validation.
-  - routers/: Contains individual files for each API endpoint. Each file should handle a specific route or set of related routes and the logic for processing requests related to that route.
-  - middleware/: Includes any middleware components used to process requests before reaching the endpoint logic (e.g., authentication checks, logging, etc.).
-  - schemas.py: Defines the schemas for endpoint input and output data (typically using Pydantic or Marshmallow). This is where the structure of request/response payloads is specified.
-
+Starlight enables a very fast initial setup process and offers an elegant solution to hosting an internal documentation site.
 
 ## Libraries
 
-1. FastAPI is the primary package driving the REST API development
-2. Pydantic enables type validation for request and response information in the endpoints
+1. [Starlight](https://starlight.astro.build/)
 
 ## Production
 
-
+Doqs is deployed to an S3 bucket with static website hosting enabled. A CloudFront distribution pulls from the S3 website endpoint and is routed via Route 53 to a custom domain to enable the content to be served at https://doqs.jyablonski.dev.
 
 ## CI / CD
 
-For continuous integration (CI), the entire test suite is run on every commit in a pull request using Docker.
+For continuous integration (CI), a minimal process is executed to simply build the project and make sure everything compiles & builds cleanly. This runs on every commit on a pull request.
 
 After a PR is merged, the continuous deployment (CD) pipeline performs the following steps:
 
 1. The project is built into a set of static HTML, CSS, and JS files in the `dist/` folder
-2. The files are then uploaded to an S3 bucket
-3. CloudFront reads from that S3 bucket & automatically serves the updated files as soon as the cache expires
+2. The `dist/` folder is then synced to an S3 bucket
+3. CloudFront automatically serves the updated content from the S3 bucket

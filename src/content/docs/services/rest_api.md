@@ -70,35 +70,3 @@ After a PR is merged, the continuous deployment (CD) pipeline performs the follo
 1. Builds a `.ZIP` bundle containing the server's source code and dependencies.
 2. Stores the `.ZIP` bundle in S3.
 3. Updates the Lambda function with the new bundle.
-
-## Code Layout
-
-The project follows a structured directory layout to maintain a clean and organized codebase. Below is a breakdown of each directory and its purpose:
-
-### `.github/`
-- Contains CI/CD configuration files for continuous integration and deployment processes (e.g., GitHub Actions workflows).
-
-### `docker/`
-- Stores all Docker-related files such as `Dockerfile` and `docker-compose.yml` used for testing and local development environments.
-
-### `static/`
-- Holds static assets like CSS, images, JavaScript files, and other resources that do not change dynamically. These files are served directly to the client.
-
-### `tests/`
-- Contains all the test cases for the project. The tests are organized into the following categories:
-  - `unit/`: Contains unit tests for individual functions (e.g., `generate_salt`).
-  - `integration/`: Contains integration tests that involve interactions with external systems (e.g., PostgreSQL, Redis, API endpoints).
-
-### `templates/`
-- Stores HTML page templates. These templates are used for rendering dynamic HTML content on the server-side before sending it to the client.
-
-### `src/`
-- Contains the application code that implements the core functionality of the project. Key files and subdirectories include:
-  - `server.py`: The main server file that initializes and runs the application. It typically contains the application setup and the entry point for the API server.
-  - `models.py`: Defines the SQLAlchemy ORM models for the application, where all the database tables and relationships are specified.
-  - `security.py`: Contains code related to security and JWT (JSON Web Token) authentication. This file handles user authentication, authorization, and token generation/validation.
-  - `schemas.py`: Defines the schemas for endpoint input and output data (typically using Pydantic or Marshmallow). This is where the structure of request/response payloads is specified.
-  - `middleware.py`: Includes any middleware components used to process requests before reaching the endpoint logic (e.g., authentication checks, logging, etc.).
-  - `routers/`: Folder which contains individual files for each API endpoint. Each file should handle a specific route or set of related routes and the logic for processing requests related to that route.
-  - `dao/`: Folder which contains individual files for all SQL-related code such as queries, database interactions, and data access objects (DAOs). This is where most of the database logic should reside.
-

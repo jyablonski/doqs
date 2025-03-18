@@ -5,7 +5,7 @@ lastUpdated: 2025-03-17 23:32:49Z
 ---
 
 
-The xxx Service is yyy
+The Dash frontend service retrieves transformed data from the Postgres database to present charts, graphs, and reports, enabling users to generate insights.
 
 ## Architecture
 
@@ -25,37 +25,15 @@ graph LR
   style VPC fill:#89888f,stroke:#444444,stroke-width:2px
 ```
 
-## Code Layout
+## How It Works
 
-The project follows a structured directory layout to maintain a clean and organized codebase. Below is a breakdown of each directory and its purpose:
-
-### `.github/`
-- Contains CI/CD configuration files for continuous integration and deployment processes (e.g., GitHub Actions workflows).
-
-### `docker/`
-- Stores all Docker-related files such as `Dockerfile` and `docker-compose.yml` used for testing and local development environments.
-
-### `tests/`
-- Contains all the test cases for the project. The tests are organized into the following categories:
-  - unit/: Contains unit tests for individual functions (e.g., `generate_salt`).
-  - integration/: Contains integration tests that involve interactions with external systems (e.g., PostgreSQL, Redis, API endpoints).
-
-### `src/`
-- Contains the application code that implements the core functionality of the project. Key files and subdirectories include:
-  - dao/: Contains all SQL-related code such as queries, database interactions, and data access objects (DAOs). This is where most of the database logic should reside.
-  - server.py: The main server file that initializes and runs the application. It typically contains the application setup and the entry point for the API server.
-  - models.py: Defines the SQLAlchemy ORM models for the application, where all the database tables and relationships are specified.
-  - security.py: Contains code related to security and JWT (JSON Web Token) authentication. This file handles user authentication, authorization, and token generation/validation.
-  - routers/: Contains individual files for each API endpoint. Each file should handle a specific route or set of related routes and the logic for processing requests related to that route.
-  - middleware/: Includes any middleware components used to process requests before reaching the endpoint logic (e.g., authentication checks, logging, etc.).
-  - schemas.py: Defines the schemas for endpoint input and output data (typically using Pydantic or Marshmallow). This is where the structure of request/response payloads is specified.
-
+Dash is a Python Library used to develop user-interactive web apps.
 
 ## Libraries
 
 1. dash is the primary package driving the frontend application development
 2. Pandas is used to store all data from database to serve throughout various graphs, plots, and tables
-3. dash-bootstrap-components is used to provide template objects to help build out the UI
+3. dash-bootstrap-components is used to provide template objects to build out the UI
 
 ## Production
 
