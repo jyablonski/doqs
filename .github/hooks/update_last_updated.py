@@ -20,5 +20,5 @@ def update_last_updated(file_path):
 if __name__ == "__main__":
     # `sys.argv` will contain the paths to the files passed by pre-commit
     for file_path in sys.argv[1:]:
-        if file_path.endswith(".md"):
+        if file_path.endswith(".md") or file_path.endswith(".mdx"):
             update_last_updated(file_path)

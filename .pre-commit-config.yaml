@@ -5,5 +5,5 @@ repos:
         name: Update Last Updated field
         entry: python3 .github/hooks/update_last_updated.py
         language: python
-        files: \.md$  # Match only markdown files
+        files: \.(md|mdx)$  # This matches both .md and .mdx files
         types: [file]  # Make sure it only runs on changed files
