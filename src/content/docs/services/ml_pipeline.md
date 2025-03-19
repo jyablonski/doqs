@@ -4,8 +4,9 @@ description: A reference page in my new Starlight docs site.
 lastUpdated: 2025-03-19
 ---
 
-The ML Pipeline consists of a Script
+The ML Pipeline generates win predictions for upcoming games
 
+---
 ## Architecture
 
 ### Database Usage
@@ -24,7 +25,7 @@ graph LR
     A[Ingestion Script] --> B[dbt]
     B --> C[ML Pipeline]
 ```
-
+---
 ## ML Model
 
 The ML Model was trained on xyz 76% prediction accuracy. It is saved on a joblib file and stored directly in the Docker Container. Alternatively this could also be stored & pulled in S3 if it were being changed often, but that's not the case.

@@ -6,6 +6,7 @@ lastUpdated: 2025-03-19
 
 The REST API Service is used to publicly serve the enriched & transformed data over various Endpoints. It also functions as a minimal web application that hosts Admin pages for managing various different features of the project.
 
+---
 ## Architecture
 
 ``` mermaid
@@ -22,7 +23,7 @@ graph LR
     Redis --> API
 
 ```
-
+---
 ## Auth / Security
 
 The REST API uses JWT (JSON Web Tokens) for authentication and authorization.
@@ -53,11 +54,10 @@ The REST API uses JWT (JSON Web Tokens) for authentication and authorization.
 
 In production, the REST API is hosted on an AWS Lambda function, with a Lambda Function URL configured for access.
 
-- Cost Efficiency: This setup is highly cost-effective, as Lambda allows for thousands of invocations with minimal cost, unlike ECS or EKS, which require payment for EC2 instances.
-  
-- Limitations: 
-  - The app becomes stateless, which can lead to cold starts.
-  - Monitoring metrics with Prometheus is not possible in the same way as with traditional server setups.
+- This setup is highly cost-effective, as Lambda allows for thousands of invocations with minimal cost, unlike ECS or EKS, which require payment for EC2 instances.
+- But, it introduces a few limitations:
+    - The app becomes stateless, which can lead to cold starts
+    - Monitoring metrics with Prometheus is not possible in the same way as with traditional server setups.
 
 All request logs are stored in AWS Cloudwatch, and traces are tracked via opentelemetry and sent over to Honeycomb where they can be monitored & alerted on.
 
