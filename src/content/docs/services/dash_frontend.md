@@ -11,8 +11,10 @@ The Dash frontend service retrieves transformed data from the Postgres database 
 
 ``` mermaid
 graph LR
-    User[User-Facing Traffic] --> ALB[Application Load Balancer]
-    ALB -->|Routes Traffic| DASH[Dash Frontend Service]
+    User[User-Facing Traffic] -->|Request| ALB[Application Load Balancer]
+    ALB -->|Response| User
+    ALB --> DASH[Dash Frontend Service]
+    DASH --> ALB
     DB[Postgres Database] --> DASH
     subgraph VPC[AWS VPC]
         ALB
@@ -27,7 +29,33 @@ graph LR
 
 ## How It Works
 
-Dash is a Python Library used to develop user-interactive web apps.
+This frontend service is built with Dash, a Python framework for creating dynamic, interactive web applications. It operates as a server running 24/7, hosting pages and displaying interactive charts, graphs, and tables.
+
+Each page has its own dedicated file to manage its content and functionality.
+
+User interactivity is enabled through Callbacks, which track user-selected options and use them to update graphs or plots accordingly. For example:
+
+``` py
+@callback(
+    Output("schedule-plot", "figure"),
+    Input("schedule-plot-selector", "value"),
+)
+```
+
+Hover labels need to be manually configured for each plot. Here's an example of how to set them up:
+
+``` py
+        fig.update_traces(
+            hoverlabel=dict(bgcolor="white", font_size=12, font_family="Rockwell"),
+            hovertemplate="<b>%{customdata[0]}</b><br>"
+            "<b>Wins Differential:</b> %{customdata[1]}<br>"
+            "<b>Preseason Over / Under:</b> %{customdata[2]}<br>"
+            "<b>Projected Stats:</b> %{customdata[3]}<br>"
+            "<b>Status:</b> %{customdata[4]}<br>"
+            "<b>Championship Odds:</b> %{customdata[5]}<br>",
+        )
+        return fig
+```
 
 ## Libraries
 
@@ -37,14 +65,9 @@ Dash is a Python Library used to develop user-interactive web apps.
 
 ## Production
 
-The Dash Frontend is hosted on ECS, which is connected to an EC2 instance managed by an Auto Scaling Group (ASG), ensuring at least one EC2 instance is always running to support the ECS service. 
-
-- This utilizes the 1 free EC2 t3.micro instance that free-tier accounts are alotted per month
+The Dash Frontend is hosted on ECS and runs 24/7. It's connected to an EC2 instance managed by an Auto Scaling Group (ASG), ensuring at least one EC2 instance is always running to support the ECS service. 
 
 This is further connected to an Application Load Balancer (ALB), which is configured with Route 53 to route traffic to the ECS service at https://nbadashboard.jyablonski.dev.
-
-- Since February 2024, ALBs have IPv4 charges even on free-tier accounts, so this costs about $12 / month to support
-
 
 ## CI / CD
 

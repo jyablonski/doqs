@@ -27,7 +27,7 @@ graph LR
         PREP --> MART
     end
 
-    MART --> DASH[Dash Frontend]
+    MART --> DASH[Dash Frontend Service]
     MART --> API[REST API Service]
 ```
 

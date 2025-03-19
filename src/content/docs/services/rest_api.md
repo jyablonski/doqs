@@ -11,7 +11,9 @@ The REST API Service is used to publicly serve the enriched & transformed data o
 
 ``` mermaid
 graph LR
-    UserFacing[User-Facing Traffic] --> CF[CloudFront Distribution] --> API[REST API Service]
+    UserFacing[User-Facing Traffic] -->|Request| CF[CloudFront Distribution] --> API[REST API Service]
+    API --> CF
+    CF -->|Response| UserFacing
 
     subgraph VPC[AWS VPC]
         DB[Postgres Database]
@@ -24,6 +26,24 @@ graph LR
 
 ```
 ---
+
+## How It Works
+
+### 1. REST API
+- Serves NBA ELT pipeline data via multiple RESTful endpoints.
+- Exposes data related to teams, players, games, betting odds, and user predictions.
+
+### 2. Web Application
+- Provides a simple frontend where users can:
+  - Log in via authentication.
+  - Place simulated (fake) bets on upcoming NBA games based on moneyline odds.
+  - View historical performance and track betting accuracy over time, updated after game results are processed.
+
+### 3. Admin Dashboard
+- A separate admin UI used to manage project-wide settings and features.
+- Restricted to users with the Admin role when running in production.
+
+
 ## Auth / Security
 
 The REST API uses JWT (JSON Web Tokens) for authentication and authorization.
@@ -36,7 +56,7 @@ The REST API uses JWT (JSON Web Tokens) for authentication and authorization.
 - User Info Storage: User information, including the password, is stored in the database. The password is securely hashed and combined with a random salt for enhanced security.
   
 ### User Roles
-- A role is associated with each user and is stored in the `rest_api_users` table in the database.
+- A role is associated with each user and is stored in the `mart.rest_api_users` table in the database.
 - There are two types of roles:
   - Admin: Users with the Admin role have access to the Admin UI and various management pages.
   - Consumer: Regular users with the Consumer role have access to general user-facing content and functionality.
@@ -52,7 +72,7 @@ The REST API uses JWT (JSON Web Tokens) for authentication and authorization.
 
 ## Production
 
-In production, the REST API is hosted on an AWS Lambda function, with a Lambda Function URL configured for access.
+In production, the REST API is hosted on an AWS Lambda function, with a Lambda Function URL configured for access. It's then hooked up to a CloudFront Distribution routed via Route 53 to a custom domain to serve the application over https://api.jyablonski.dev.
 
 - This setup is highly cost-effective, as Lambda allows for thousands of invocations with minimal cost, unlike ECS or EKS, which require payment for EC2 instances.
 - But, it introduces a few limitations:

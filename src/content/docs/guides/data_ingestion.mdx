@@ -1,0 +1,40 @@
+---
+title: Data Ingestion
+description: A reference page in my new Starlight docs site.
+lastUpdated: 2025-03-19
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+This doc walks through how data ingestion is handled for the NBA ELT Project
+
+## Background
+
+The ingestion process is standardized across all data sources, regardless of the system they originate from. This uniform approach simplifies the onboarding of new data sources and ensures consistency across the pipeline.
+
+By maintaining a common pattern, extending the system to handle additional sources requires minimal effort.
+
+## Workflow Overview
+
+<Steps>
+
+1. Pull data from a source system
+2. Turn data into a Pandas DataFrame for subsequent steps
+3. Perform minimal cleaning, data enrichment, and column name standardization
+4. Merge data from Pandas DataFrame into Postgres `nba_source` schema
+5. Write data to S3 as Parquet files for backup purposes
+
+</Steps>
+
+## Merge Process Details
+
+The merge logic predates Postgres' native MERGE functionality introduced in version 15. Instead, a custom merge utility is provided via the internal Python library `jyablonski_common_modules`.
+
+### How It Works
+
+1. The DataFrame is first inserted into a temporary table in Postgres.
+2. Records from the temp table are upserted into the target source table:
+    - Inserts: New records are added.
+    - Updates: Existing records are updated based on matching keys.
+3. A `modified_at` timestamp is automatically updated whenever a record is inserted or changed.
+4. dbt leverages the `modified_at` timestamp to drive incremental builds for downstream Fact and Dimension tables, which are the only tables that pull from the Source data

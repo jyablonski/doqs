@@ -2,6 +2,10 @@
 title: NBA Project
 description: A guide in my new Starlight docs site.
 lastUpdated: 2025-03-19
+tags:
+  - AWS
+  - Cloud
+  - Storage
 
 sidebar:
   # Set a custom order for the link (lower numbers are displayed higher up)

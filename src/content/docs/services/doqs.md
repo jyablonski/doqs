@@ -11,10 +11,10 @@ Doqs is an internal site written in Starlight to store documentation on the NBA 
 
 ``` mermaid
 graph LR
-    A[User Facing Traffic] --> B[Amazon CloudFront]
+    A[User Facing Traffic] -->|Request| B[Amazon CloudFront]
     B --> C[S3 Bucket ]
     C --> B
-    B --> A
+    B -->|Response| A
 
 ```
 

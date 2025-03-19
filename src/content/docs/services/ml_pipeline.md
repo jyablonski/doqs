@@ -15,7 +15,7 @@ graph TD
     A[Postgres Database] -->|Reads data| B[ML Pipeline]
     B -->|Writes predictions| A
     A -->|Data used by| C[REST API Service]
-    A -->|Data used by| D[Frontend Dashboard]
+    A -->|Data used by| D[Dash Frontend Service]
 
 ```
 
@@ -26,9 +26,31 @@ graph LR
     B --> C[ML Pipeline]
 ```
 ---
-## ML Model
 
-The ML Model was trained on xyz 76% prediction accuracy. It is saved on a joblib file and stored directly in the Docker Container. Alternatively this could also be stored & pulled in S3 if it were being changed often, but that's not the case.
+## How It Works
+
+The ML model is a Logistic Regression classifier trained on data from the 2023-24 season.
+
+- In production, the model achieves around 70-75% accuracy on win predictions.
+- The trained model is serialized using `joblib` and stored directly into the container image that runs in production.
+
+> _Note:_  
+For more dynamic use cases, the model could be stored in S3 and pulled at runtime. This would allow the pipeline to load updated versions without requiring a container rebuild.
+
+### Features Used:
+
+The following features are pulled for each home & away team in the upcoming games:
+
+1. **Days of Rest** - Measures how many days of rest the team has had before the game.
+   
+2. **Top Players** - Ordinal ranking (0, 1, 2) which represents whether the team's top players are active or unavailable for the game
+
+3. **Moneyline Odds** - Moneyline odds for the team for the upcoming game
+
+3. **Recent Team Performance** - Team Win % for the last 10 games
+
+4. **Overall Team Performance** - Team Win % for the entire season thus far
+
 
 
 ## Libraries
