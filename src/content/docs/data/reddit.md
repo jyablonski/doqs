@@ -1,7 +1,7 @@
 ---
 title: Reddit
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-03-17 23:32:49Z
+lastUpdated: 2025-03-19
 ---
 
 This doc walks through Reddit as a Data Source for the NBA Project

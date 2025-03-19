@@ -1,7 +1,7 @@
 ---
 title: Ingestion Script
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-03-17 23:32:49Z
+lastUpdated: 2025-03-19
 ---
 
 The Ingestion Script is responsible for all source data ingestion for the NBA ELT Project

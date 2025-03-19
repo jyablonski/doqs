@@ -1,7 +1,7 @@
 ---
 title: REST API
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-03-17 23:32:49Z
+lastUpdated: 2025-03-19
 ---
 
 The REST API Service is used to publicly serve the enriched & transformed data over various Endpoints. It also functions as a minimal web application that hosts Admin pages for managing various different features of the project.
