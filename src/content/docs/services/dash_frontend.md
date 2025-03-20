@@ -1,18 +1,20 @@
 ---
 title: Dash Frontend
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-03-17 23:32:49Z
+lastUpdated: 2025-03-19
 ---
 
 
-The xxx Service is yyy
+The Dash frontend service retrieves transformed data from the Postgres database to present charts, graphs, and reports, enabling users to generate insights.
 
 ## Architecture
 
 ``` mermaid
 graph LR
-    User[User-Facing Traffic] --> ALB[Application Load Balancer]
-    ALB -->|Routes Traffic| DASH[Dash Frontend Service]
+    User[User-Facing Traffic] -->|Request| ALB[Application Load Balancer]
+    ALB -->|Response| User
+    ALB --> DASH[Dash Frontend Service]
+    DASH --> ALB
     DB[Postgres Database] --> DASH
     subgraph VPC[AWS VPC]
         ALB
@@ -25,48 +27,47 @@ graph LR
   style VPC fill:#89888f,stroke:#444444,stroke-width:2px
 ```
 
-## Code Layout
+## How It Works
 
-The project follows a structured directory layout to maintain a clean and organized codebase. Below is a breakdown of each directory and its purpose:
+This frontend service is built with Dash, a Python framework for creating dynamic, interactive web applications. It operates as a server running 24/7, hosting pages and displaying interactive charts, graphs, and tables.
 
-### `.github/`
-- Contains CI/CD configuration files for continuous integration and deployment processes (e.g., GitHub Actions workflows).
+Each page has its own dedicated file to manage its content and functionality.
 
-### `docker/`
-- Stores all Docker-related files such as `Dockerfile` and `docker-compose.yml` used for testing and local development environments.
+User interactivity is enabled through Callbacks, which track user-selected options and use them to update graphs or plots accordingly. For example:
 
-### `tests/`
-- Contains all the test cases for the project. The tests are organized into the following categories:
-  - unit/: Contains unit tests for individual functions (e.g., `generate_salt`).
-  - integration/: Contains integration tests that involve interactions with external systems (e.g., PostgreSQL, Redis, API endpoints).
+``` py
+@callback(
+    Output("schedule-plot", "figure"),
+    Input("schedule-plot-selector", "value"),
+)
+```
 
-### `src/`
-- Contains the application code that implements the core functionality of the project. Key files and subdirectories include:
-  - dao/: Contains all SQL-related code such as queries, database interactions, and data access objects (DAOs). This is where most of the database logic should reside.
-  - server.py: The main server file that initializes and runs the application. It typically contains the application setup and the entry point for the API server.
-  - models.py: Defines the SQLAlchemy ORM models for the application, where all the database tables and relationships are specified.
-  - security.py: Contains code related to security and JWT (JSON Web Token) authentication. This file handles user authentication, authorization, and token generation/validation.
-  - routers/: Contains individual files for each API endpoint. Each file should handle a specific route or set of related routes and the logic for processing requests related to that route.
-  - middleware/: Includes any middleware components used to process requests before reaching the endpoint logic (e.g., authentication checks, logging, etc.).
-  - schemas.py: Defines the schemas for endpoint input and output data (typically using Pydantic or Marshmallow). This is where the structure of request/response payloads is specified.
+Hover labels need to be manually configured for each plot. Here's an example of how to set them up:
 
+``` py
+        fig.update_traces(
+            hoverlabel=dict(bgcolor="white", font_size=12, font_family="Rockwell"),
+            hovertemplate="<b>%{customdata[0]}</b><br>"
+            "<b>Wins Differential:</b> %{customdata[1]}<br>"
+            "<b>Preseason Over / Under:</b> %{customdata[2]}<br>"
+            "<b>Projected Stats:</b> %{customdata[3]}<br>"
+            "<b>Status:</b> %{customdata[4]}<br>"
+            "<b>Championship Odds:</b> %{customdata[5]}<br>",
+        )
+        return fig
+```
 
 ## Libraries
 
 1. dash is the primary package driving the frontend application development
 2. Pandas is used to store all data from database to serve throughout various graphs, plots, and tables
-3. dash-bootstrap-components is used to provide template objects to help build out the UI
+3. dash-bootstrap-components is used to provide template objects to build out the UI
 
 ## Production
 
-The Dash Frontend is hosted on ECS, which is connected to an EC2 instance managed by an Auto Scaling Group (ASG), ensuring at least one EC2 instance is always running to support the ECS service. 
-
-- This utilizes the 1 free EC2 t3.micro instance that free-tier accounts are alotted per month
+The Dash Frontend is hosted on ECS and runs 24/7. It's connected to an EC2 instance managed by an Auto Scaling Group (ASG), ensuring at least one EC2 instance is always running to support the ECS service. 
 
 This is further connected to an Application Load Balancer (ALB), which is configured with Route 53 to route traffic to the ECS service at https://nbadashboard.jyablonski.dev.
-
-- Since February 2024, ALBs have IPv4 charges even on free-tier accounts, so this costs about $12 / month to support
-
 
 ## CI / CD
 

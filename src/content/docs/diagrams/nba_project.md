@@ -1,7 +1,11 @@
 ---
 title: NBA Project
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-03-17 23:32:49Z
+lastUpdated: 2025-03-19
+tags:
+  - AWS
+  - Cloud
+  - Storage
 
 sidebar:
   # Set a custom order for the link (lower numbers are displayed higher up)
@@ -13,7 +17,7 @@ sidebar:
 ---
 
 Guides lead a user through a specific task they want to accomplish, often with a sequence of steps.
-Writing a good guide requires thinking about what your users are trying to do.
+Writing a good guide requires thinking about what your users are trying to do.z
 
 ## Further reading
 

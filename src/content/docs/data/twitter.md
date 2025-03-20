@@ -1,7 +1,7 @@
 ---
 title: Twitter
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-03-17 23:32:49Z
+lastUpdated: 2025-03-19
 ---
 
 :::caution[Not In Use]
@@ -18,8 +18,6 @@ Twitter is often where sports news breaks first—whether it’s trades, injurie
 
 Unfortunately, in June 2023 Elon completely removed the free-tier of the Twitter API, and made major changes to the Basic Plan that they previously offered. This effectively priced out indie developers and open source projects from scraping data via an API.
 
-Before this, the 
-
 ## Data Ingestion Process
 
 Tweepy was used to authenticate w/ the Twitter API and pull a mix of high engagement tweets from well-known sports journalists, as well as other random NBA-related tweets.
@@ -29,7 +27,7 @@ The same Sentiment Analysis process used in the Reddit section was also utilized
 ### Source Tables
 
 - `nba_source` Schema
-    1. `aws_twitter_tweepy_data_source` -> Data pulled via tweepy Package
-    2. `aws_twitter_data_source` -> Old Data which was previously web scraped
+    1. `aws_twitter_tweepy_data_source` -> Tweet data pulled via tweepy Package
+    2. `aws_twitter_data_source` -> Old tweet data which was previously web scraped
 
 ## Data Quality Considerations
