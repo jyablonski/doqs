@@ -64,3 +64,12 @@ All commands are run from the root of the project, from a terminal:
 ## 👀 Want to learn more?
 
 Check out [Starlight’s docs](https://starlight.astro.build/), read [the Astro documentation](https://docs.astro.build), or jump into the [Astro Discord server](https://astro.build/chat).
+
+
+## Jacobs Notes
+
+Add [starlight-sidebar-topics](https://github.com/HiDeoo/starlight-sidebar-topics) to add different clickable documentation sections instead of displaying all at the same time
+
+- `npm i starlight-sidebar-topics`
+
+[Starlight Icons](https://starlight.astro.build/reference/icons/)

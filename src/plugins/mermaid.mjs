@@ -7,12 +7,6 @@ export function remarkDiagram() {
     if (!data.astro.frontmatter['extra']) {
       data.astro.frontmatter.extra = []
     }
-    visit(tree, 'inlineMath', (node) => {
-      if (!data.astro.frontmatter.extra.includes('math')) {
-        data.astro.frontmatter.extra.push('math')
-        node()
-      }
-    })
     visit(tree, 'code', (node) => {
       if (node.lang === 'markmap' || node.lang === 'mermaid') {
         node.type = 'html'
