@@ -20,7 +20,7 @@ export default defineConfig({
 			],
 			title: 'Doqs',
 			// remove the previous + next page links on all pages
-			pagination: false, 
+			pagination: false,
 			favicon: './src/assets/logo.png',
 			logo: {
 				src: './src/assets/logo.png',
@@ -31,13 +31,13 @@ export default defineConfig({
 			sidebar: [
 				{ label: 'Home', link: '/' },
 				{
+					label: 'Architecture',
+					autogenerate: { directory: 'architecture' },
+				},
+				{
 					label: 'Data Sources',
 					autogenerate: { directory: 'data' },
 					collapsed: true,
-				},
-				{
-					label: 'Diagrams',
-					autogenerate: { directory: 'diagrams' },
 				},
 				{
 					label: 'Guides',

@@ -1,7 +1,7 @@
 ---
 title: Doqs
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-03-19
+lastUpdated: 2025-03-21
 ---
 
 
@@ -20,7 +20,7 @@ graph LR
 
 ## How It Works
 
-Astro Starlight is a theme and framework built on top of Astro, designed specifically for creating modern, fast, and customizable documentation websites. It leverages Astro’s component-based architecture and static site generation capabilities to deliver highly performant docs. It ships with a default template and a handful of prebuilt components to allow various customization.
+Starlight is a theme and framework built on top of Astro, designed specifically for creating modern, fast, and customizable documentation websites. It leverages Astro’s component-based architecture and static site generation capabilities to deliver highly performant docs. It ships with a default template and a handful of prebuilt components to allow various customization.
 
 During build time, Astro compiles all .md files into static HTML, CSS, and JS.
 
