@@ -1,7 +1,7 @@
 ---
 title: basketball-reference
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-03-19
+lastUpdated: 2025-03-23
 ---
 
 This doc walks through basketball-reference as a Data Source for the NBA Project
@@ -49,3 +49,7 @@ After the data has been pulled, it's stored into Pandas DataFrames and upserted 
         - [JJ Redick](https://www.basketball-reference.com/players/r/redicjj01.html)
         - [J.J Barea](https://www.basketball-reference.com/players/b/bareajo01.html)
     - Some of this I've tried to cleanup via various [helper functions](https://github.com/jyablonski/nba_elt_ingestion/blob/master/src/utils.py#L167), but it's still something to watchout for
+
+2. Boxscore & play-by-play data is sometimes not available at 12 pm UTC when the Ingestion Script runs.
+
+    - In these cases, this data must be manually pulled at a later time once the data is made available, and the downstream dbt models must be refreshed afterwards.

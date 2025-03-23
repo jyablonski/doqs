@@ -1,7 +1,7 @@
 ---
 title: DraftKings
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-03-19
+lastUpdated: 2025-03-23
 ---
 
 This doc walks through DraftKings as a Data Source for the NBA Project
@@ -38,3 +38,4 @@ After the data has been pulled, it's stored into Pandas DataFrames and upserted 
 1. Because data is only pulled once a day, there can be inconsistencies with the metrics being pulled vs when the game is played ~10-12 hours later
     - These are typically only minor differences
     - However, if star players are downgraded from day-to-day to out before the game, then the lines can have more dramatic shifts
+    - A separate Script or Lambda could be setup to re-pull & upsert the odds data on an hourly basis, but then the downstream dbt models would also have to be rebuilt on the same cadence. The Frontend dashboard would also have to re-sync this data, so this process introduces a fair amount of complexity.

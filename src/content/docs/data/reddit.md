@@ -1,7 +1,7 @@
 ---
 title: Reddit
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-03-19
+lastUpdated: 2025-03-23
 ---
 
 This doc walks through Reddit as a Data Source for the NBA Project
@@ -42,4 +42,4 @@ After the data has been pulled & enriched, it's stored into Pandas DataFrames an
 
 ## Data Quality Considerations
 
-1. The quality of the Sentiment Analysis provided by nltk isn't perfect.
+1. The quality of the Sentiment Analysis provided by nltk isn't perfect. There's potential improvements to be made here to increase the accuracy and validity of these sentiment analysis values.

@@ -52,6 +52,11 @@ export default defineConfig({
 					autogenerate: { directory: 'services' },
 				},
 			],
+			// enable this if you want to set a footer up across all pages
+			// components: {
+			// 	// Footer: './src/components/Footer.astro',
+			// 	Header: './src/components/Header.astro'
+			// },
 		}),
 	],
 	markdown: {

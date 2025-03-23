@@ -1,7 +1,7 @@
 ---
 title: Dash Frontend
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-03-19
+lastUpdated: 2025-03-23
 ---
 
 
@@ -33,7 +33,7 @@ This frontend service is built with Dash, a Python framework for creating dynami
 
 Each page has its own dedicated file to manage its content and functionality.
 
-User interactivity is enabled through Callbacks, which track user-selected options and use them to update graphs or plots accordingly. For example:
+User interactivity is enabled through Callbacks, which track user-selected options and uses them to update graphs or plots accordingly. For example:
 
 ``` py
 @callback(
@@ -67,6 +67,8 @@ Hover labels need to be manually configured for each plot. Here's an example of 
 
 The Dash Frontend is hosted on ECS and runs 24/7. It's connected to an EC2 instance managed by an Auto Scaling Group (ASG), ensuring at least one EC2 instance is always running to support the ECS service. 
 
+- For cost purposes, this ASG only allows up to 1 instance to be running at a time
+
 This is further connected to an Application Load Balancer (ALB), which is configured with Route 53 to route traffic to the ECS service at https://nbadashboard.jyablonski.dev.
 
 ## CI / CD
@@ -79,4 +81,5 @@ After a PR is merged, the continuous deployment (CD) pipeline performs the follo
 2. Pushes the Docker Image to ECR
 3. Restarts the ECS Nodes that run the ECS Service so that they pull & serve the updated Docker Image
 
-- **NOTE** For larger projects a more sophisticated deployment process would be ideal here like blue / green or a rolling deploy, but this process is simply enough to support the low traffic
+> _Note:_  
+For larger projects a more sophisticated deployment process would be ideal here like blue / green or a rolling deploy, but because this service only runs on a single EC2 node this is simple enough to support the low traffic
