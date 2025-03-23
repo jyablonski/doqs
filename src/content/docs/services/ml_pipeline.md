@@ -1,7 +1,7 @@
 ---
 title: ML Pipeline
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-03-19
+lastUpdated: 2025-03-23
 ---
 
 The ML Pipeline generates win predictions for upcoming games
@@ -14,8 +14,8 @@ The ML Pipeline generates win predictions for upcoming games
 graph TD
     A[Postgres Database] -->|Reads data| B[ML Pipeline]
     B -->|Writes predictions| A
-    A -->|Data used by| C[REST API Service]
-    A -->|Data used by| D[Dash Frontend Service]
+    A --> C[REST API Service]
+    A --> D[Dash Frontend Service]
 
 ```
 
