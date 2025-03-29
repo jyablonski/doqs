@@ -1,17 +1,17 @@
 ---
 title: REST API
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-03-19
+lastUpdated: 2025-03-29
 ---
 
-The REST API Service is used to publicly serve the enriched & transformed data over various Endpoints. It also functions as a minimal web application that hosts Admin pages for managing various different features of the project.
+The REST API is a Python Service used to publicly serve the enriched & transformed data over various endpoints. It also functions as a minimal web application that hosts Admin pages for managing various different features of the project.
 
 ---
 ## Architecture
 
 ``` mermaid
 graph LR
-    UserFacing[User-Facing Traffic] -->|Request| CF[CloudFront Distribution] --> API[REST API Service]
+    UserFacing[User Traffic] -->|Request| CF[CloudFront Distribution] --> API[REST API Service]
     API --> CF
     CF -->|Response| UserFacing
 

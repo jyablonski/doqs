@@ -2,6 +2,9 @@
 import { remarkDiagram } from './src/plugins/mermaid.mjs'
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import starlightLinksValidator from 'starlight-links-validator'
+import starlightImageZoom from 'starlight-image-zoom'
+
 
 // https://astro.build/config
 export default defineConfig({
@@ -18,6 +21,7 @@ export default defineConfig({
 					content: `mermaid.initialize({ startOnLoad: true });`,
 				},
 			],
+			plugins: [starlightLinksValidator(), starlightImageZoom()],
 			title: 'Doqs',
 			// remove the previous + next page links on all pages
 			pagination: false,
