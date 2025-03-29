@@ -1,10 +1,13 @@
 ---
 title: Backfilling
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-03-21
+lastUpdated: 2025-03-29
 authors: [jyablonski]
 tags: [test1, test2]
 ---
+
+import { Image } from 'astro:assets';
+import slack_alert from "../../../assets/slack_alert.png";
 
 This doc goes in detail about performing backfills for the NBA ELT Project
 
@@ -16,7 +19,7 @@ There are 3 separate entities that involve varying degrees of backfilling
 
 The Boxscore + Play-by-Play data is sometimes not refreshed in time when the Ingestion Script is triggered at 12 pm UTC every day. When this happens, the script will complete successfully and send an alert to Slack that the data was not available
 
-- ![Image](https://github.com/user-attachments/assets/f91a4a91-6325-47e0-b87c-b0cf27cf43ba)
+- <Image src={slack_alert} alt="slack" width="750" height="250" />
 
 Later in the day, you must manually run the following functions to pull the data and then store the records to SQL afterwards
 

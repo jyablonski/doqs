@@ -1,7 +1,7 @@
 ---
 title: Ingestion Script
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-03-23
+lastUpdated: 2025-03-29
 ---
 
 The Ingestion Script is responsible for all source data ingestion for the NBA ELT Project
@@ -10,11 +10,24 @@ The Ingestion Script is responsible for all source data ingestion for the NBA EL
 
 ``` mermaid
 graph LR
-    A[Basketball-Reference] --> INGEST[Ingestion Script]
-    B[DraftKings] --> INGEST
-    C[Reddit] --> INGEST
-    INGEST --> DB[Postgres Database]
-    INGEST --> S3[S3]
+    subgraph DS[Data Sources]
+        A[Basketball-Reference]
+        B[DraftKings]
+        C[Reddit]
+    end
+
+    subgraph DD[Data Destinations]
+        DB[Postgres Database]
+        S3[S3]
+    end
+
+    A --> INGEST[Ingestion Script]
+    B --> INGEST
+    C --> INGEST
+    INGEST --> DB
+    INGEST --> S3
+
+
 ```
 
 ### ELT Pipeline Orchestration

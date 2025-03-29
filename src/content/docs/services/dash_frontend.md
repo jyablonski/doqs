@@ -1,7 +1,7 @@
 ---
 title: Dash Frontend
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-03-23
+lastUpdated: 2025-03-29
 ---
 
 
@@ -11,7 +11,7 @@ The Dash frontend service retrieves transformed data from the Postgres database 
 
 ``` mermaid
 graph LR
-    User[User-Facing Traffic] -->|Request| ALB[Application Load Balancer]
+    User[User Traffic] -->|Request| ALB[Application Load Balancer]
     ALB -->|Response| User
     ALB --> DASH[Dash Frontend Service]
     DASH --> ALB
