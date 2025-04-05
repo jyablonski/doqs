@@ -41,7 +41,6 @@ export default defineConfig({
 				{
 					label: 'Data Sources',
 					autogenerate: { directory: 'data' },
-					collapsed: true,
 				},
 				{
 					label: 'Guides',
