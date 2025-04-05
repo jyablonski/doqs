@@ -1,7 +1,7 @@
 ---
 title: Twitter
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-03-19
+lastUpdated: 2025-04-05
 ---
 
 :::caution[Not In Use]
@@ -22,12 +22,15 @@ Unfortunately, in June 2023 Elon completely removed the free-tier of the Twitter
 
 Tweepy was used to authenticate w/ the Twitter API and pull a mix of high engagement tweets from well-known sports journalists, as well as other random NBA-related tweets.
 
+- Before Tweepy, some tweet data was manually scraped off the website and stored into a separate table
+- This data was joined together and transformed downstream in dbt
+
 The same Sentiment Analysis process used in the Reddit section was also utilized here to enrich the social media data and identify comments as positive or negative.
 
 ### Source Tables
 
 - `nba_source` Schema
-    1. `aws_twitter_tweepy_data_source` -> Tweet data pulled via tweepy Package
-    2. `aws_twitter_data_source` -> Old tweet data which was previously web scraped
+    1. `aws_twitter_tweepy_data_source` -> Tweet data pulled via the official Twitter API using the tweepy Package
+    2. `aws_twitter_data_source` -> Tweet data which was web scraped directly from raw tweets
 
 ## Data Quality Considerations

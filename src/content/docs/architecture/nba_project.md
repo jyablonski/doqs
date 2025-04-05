@@ -1,7 +1,7 @@
 ---
 title: NBA Project
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-03-21
+lastUpdated: 2025-04-05
 tags:
   - AWS
   - Cloud
@@ -121,7 +121,7 @@ graph LR;
 
 ---
 
-### Common Python Modules
+### Common Modules
 
 Custom internal Python package: [`jyablonski_common_modules`](https://github.com/jyablonski/jyablonski_common_modules)
 

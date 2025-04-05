@@ -1,14 +1,14 @@
 ---
 title: basketball-reference
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-03-23
+lastUpdated: 2025-04-05
 ---
 
 This doc walks through basketball-reference as a Data Source for the NBA Project
 
 ## Source System
 
-Sports Reference is a popular website that provides a comprehensive database of basketball statistics, analytics, and historical information. For basketball it covers the NBA, WNBA, ABA, college basketball, and international leagues, and it also covers other sports.
+Sports Reference is a renowned website that provides a comprehensive database of statistics, analytics, and historical information across various sports. For the NBA, it includes detailed pages on game logs, play-by-play data, injuries, team transactions, salaries, and more. This serves as the primary data source for all NBA-related information throughout this project.
 
 The NBA offers an official API which would normally be the preferred way of extracting this data, but the NBA blocks all AWS IP addresses from accessing its API. For this reason, basketball-reference is used to pull all NBA related data.
 

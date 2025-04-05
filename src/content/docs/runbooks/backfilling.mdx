@@ -1,7 +1,7 @@
 ---
 title: Backfilling
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-03-29
+lastUpdated: 2025-04-05
 authors: [jyablonski]
 tags: [test1, test2]
 ---
@@ -17,64 +17,38 @@ There are 3 separate entities that involve varying degrees of backfilling
 
 ### Ingestion Script
 
-The Boxscore + Play-by-Play data is sometimes not refreshed in time when the Ingestion Script is triggered at 12 pm UTC every day. When this happens, the script will complete successfully and send an alert to Slack that the data was not available
+The Boxscore + Play-by-Play (PBP) data is sometimes not refreshed in time when the Ingestion Script is triggered at 12 pm UTC every day. When this happens, the script will complete successfully and send an alert to Slack that the data was not available
 
 - <Image src={slack_alert} alt="slack" width="750" height="250" />
 
-Later in the day, you must manually run the following functions to pull the data and then store the records to SQL afterwards
+Later in the day, a backfill for the missing data can be run by executing the following command:
 
-- `get_boxscores_data`
-- `get_pbp_data`
-- By default, the boxscores data pulls data from yesterday. Pass in the appropriate parameters to the function if you need to backfill a different date
-
-<details>
-<summary>Python Code Example</summary>
-
-``` py
-boxscores = get_boxscores_data(feature_flags_df=feature_flags)
-pbp_data = get_pbp_data(feature_flags_df=feature_flags, df=boxscores)
-
-with engine.begin() as connection:
-    write_to_sql_upsert(
-        conn=connection,
-        table="aws_boxscores_source",
-        schema=source_schema,
-        df=boxscores,
-        primary_keys=["player", "date"],
-    )
-    write_to_sql_upsert(
-        conn=connection,
-        table="aws_pbp_data_source",
-        schema=source_schema,
-        df=pbp_data,
-        primary_keys=[
-            "hometeam",
-            "awayteam",
-            "date",
-            "timequarter",
-            "numberperiod",
-            "descriptionplayvisitor",
-            "descriptionplayhome",
-        ],
-    )
+``` sh
+python -m scripts.backfill --run_date 2025-01-01
 ```
 
-</details>
+- This is a Backfill Script which takes in a required `run_date` argument in the format of `YYYY-MM-DD`. It executes the Boxscores + PBP data portion of the Ingestion Script for that run date, and stores the results to Postgres.
+- For example, if you choose a run date of `2025-01-01`, it will pull Boxscore data from games played on `2025-01-01`, and also pull PBP data for those same games.
 
-After ingesting the data into the `nba_source` Schema, you'll probably want to go refresh the data in dbt so that the downstream services are serving updated data as well.
+After ingesting the data into the `nba_source` schema, you may want to manually trigger a dbt refresh to ensure downstream services are immediately serving the latest data.
+
+> *Note: This step is optional—if you choose not to refresh dbt manually, the data will be automatically updated during the next scheduled run of the dbt job.*
 
 ### dbt
 
-For backfill purposes, to refresh specific models in the dbt project you can run commands like:
+For backfill purposes, to refresh specific models and their downstream dependencies in the dbt project you can run commands like:
 
 - `dbt build --select fact_boxscores+ fact_pbp_data+ --target prod`
+    - This is typically what must be ran after an Ingestion Script backfill
 - `dbt build --select fact_schedule_data+ --target prod --full-refresh`
-- Adjust this depending on what you want to run based on what data sources were delayed that day
+- Adjust this depending on what you want to refresh
 
 If needed, the entire dbt project can be refreshed with:
 
 - `dbt build --target prod --full-refresh`
 - As of March 2025, a full refresh on the entire project takes about ~4 minutes to run
+
+> *Note: Running a full refresh has no downsides. All models can be rebuilt at any time, ensuring consistent accuracy.*
 
 ### ML Pipeline
 
@@ -98,6 +72,8 @@ limit 100;
 The REST API is a stateless service and does not need to be rebooted; it will always pull the latest data available in the `mart` Layer on every request.
 
 However, if you've refreshed the data in the `mart` Layer and want those changes to be reflected in the Dashboard, then run the following script to reboot the ECS Service which will force it to re-pull the data.
+
+- This typically results in a 5-10 second downtime for the dashboard, but it will automatically re-sync and be back up shortly after
 
 ``` sh
 #!/bin/bash
