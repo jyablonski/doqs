@@ -1,7 +1,7 @@
 ---
 title: Ingestion Script
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-03-29
+lastUpdated: 2025-04-10
 ---
 
 The Ingestion Script is responsible for all source data ingestion for the NBA ELT Project
@@ -72,10 +72,10 @@ As soon as the script is finished & all ingestion data has been loaded, the dbt 
 
 For continuous integration (CI), the entire test suite is run on every commit in a pull request.
 
-- It installs Poetry & the Poetry environment on the GitHub Actions runner
+- It installs UV & the project dependencies on the GitHub Actions runner
 - It uses Docker to spin up a Postgres database w/ bootstrap data
 - It then runs the test suite, using the Postgres database to run integration tests
-- The Poetry environment used by the GitHub Actions runners also gets cached for up to 7 days, enabling faster test suite executions
+- The UV environment used by the GitHub Actions runners also gets cached for up to 7 days, enabling faster test suite executions
 
 After a PR is merged, the continuous deployment (CD) pipeline performs the following steps:
 
