@@ -1,7 +1,7 @@
 ---
 title: Doqs
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-03-29
+lastUpdated: 2025-04-10
 ---
 
 
@@ -28,6 +28,10 @@ During build time, Astro compiles all .md files into static HTML, CSS, and JS.
 - These static files can then be used to host a static web app on something like Netlify, GitHub Pages, or S3
 
 Starlight enables a very fast initial setup process and offers an elegant solution to hosting an internal documentation site.
+
+To enable the use of [Mermaid Diagrams](https://mermaid.js.org/) throughout the site, a custom remark plugin in the codebase transforms mermaid-labeled code blocks into HTML `<div>` elements. 
+
+- To turn those `<div>` elements into diagrams, the Mermaid JavaScript library is loaded on every page via a `<script>` tag attached to the `<head>` of every page. This external script detects these elements and renders them as diagrams in the browser.
 
 ## Libraries
 
