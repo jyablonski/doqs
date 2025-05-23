@@ -73,3 +73,5 @@ Add [starlight-sidebar-topics](https://github.com/HiDeoo/starlight-sidebar-topic
 - `npm i starlight-sidebar-topics`
 
 [Starlight Icons](https://starlight.astro.build/reference/icons/)
+
+`npx @astrojs/upgrade`
