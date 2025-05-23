@@ -29,9 +29,9 @@ export default defineConfig({
 			logo: {
 				src: './src/assets/logo.png',
 			},
-			social: {
-				github: 'https://github.com/jyablonski/doqs',
-			},
+			social: [
+				{ icon: 'github', label: 'GitHub', href: 'https://github.com/jyablonski/doqs' },
+			],
 			sidebar: [
 				{ label: 'Home', link: '/' },
 				{

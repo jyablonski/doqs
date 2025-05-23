@@ -1,7 +1,7 @@
 ---
 title: Backfilling
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-04-05
+lastUpdated: 2025-05-23
 authors: [jyablonski]
 tags: [test1, test2]
 ---
@@ -19,7 +19,7 @@ There are 3 separate entities that involve varying degrees of backfilling
 
 The Boxscore + Play-by-Play (PBP) data is sometimes not refreshed in time when the Ingestion Script is triggered at 12 pm UTC every day. When this happens, the script will complete successfully and send an alert to Slack that the data was not available
 
-- <Image src={slack_alert} alt="slack" width="750" height="250" />
+- <Image src={slack_alert} alt="slack" loading="lazy" decoding="async" class="w-full h-auto" />
 
 Later in the day, a backfill for the missing data can be run by executing the following command:
 

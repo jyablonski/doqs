@@ -1,10 +1,12 @@
 ---
 title: Resetting AWS Account
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-03-19
+lastUpdated: 2025-05-23
 ---
 
+import { Image } from 'astro:assets';
 import { Steps } from '@astrojs/starlight/components';
+import route_53 from "../../../assets/route53.png";
 
 This doc walks through how to reset the AWS Account used for the NBA Project.
 
@@ -34,7 +36,7 @@ This doc walks through how to reset the AWS Account used for the NBA Project.
 14. Run `terraform apply` to build all infrastructure in New Account (1st run)
     - **NOTE** This will likely fail on ECS Services as the Docker Images are missing. They'll be added later
 15. Update `jyablonski.dev` Route53 Record to point to provided Google Domain DNS Endpoints
-    - ![Image](https://github.com/user-attachments/assets/86f910fe-35d7-4816-a0e2-605222ce2039)
+    - <Image src={route_53} alt="AWS Route 53 Logo" loading="lazy" decoding="async" class="w-full h-auto" />
 16. Add `jyablonski9@gmail.com` Email Verified Identity in SES manually & accept email in inbox afterwards
     - [AWS SES Link](https://us-east-1.console.aws.amazon.com/ses/home?region=us-east-1#/identities)
 17. Run Liquibase Migrations to build source tables
