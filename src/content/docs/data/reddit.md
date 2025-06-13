@@ -1,10 +1,10 @@
 ---
 title: Reddit
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-03-23
+lastUpdated: 2025-06-13
 ---
 
-This doc walks through Reddit as a Data Source for the NBA Project
+This page walks through Reddit as a Data Source for the NBA Project
 
 ## Source System
 
@@ -36,8 +36,8 @@ After the data has been pulled & enriched, it's stored into Pandas DataFrames an
 ### Source Tables
 
 - `nba_source` Schema
-    1. `aws_reddit_data_source` -> Reddit posts
-    2. `aws_reddit_comment_data_source` -> Reddit comments
+    1. `reddit_posts` -> Reddit posts
+    2. `reddit_comments` -> Reddit comments
 
 
 ## Data Quality Considerations

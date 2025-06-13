@@ -1,7 +1,7 @@
 ---
 title: NBA Project
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-04-05
+lastUpdated: 2025-06-13
 tags:
   - AWS
   - Cloud
@@ -34,7 +34,7 @@ Core components include:
 - **Frontend Dashboard** – Visualizes trends and metrics.
 - **Infrastructure as Code** – Provisioned and managed via Terraform.
 
-Operational costs are kept minimal (~$12/month), leveraging the AWS Free Tier and optimizing architecture for efficiency and scalability.
+Operational costs are kept minimal (~$12/month), leveraging the AWS Free Tier and optimizing architecture for efficiency and simplicity.
 
 ---
 
@@ -89,9 +89,12 @@ graph LR;
 
 - Exposes endpoints for public consumption and internal admin tasks.
 - Includes a lightweight web app for managing feature flags and other admin controls.
-- Deployed via **AWS Lambda Function URL** with **CloudFront** & **Route 53** for distribution and routing.
+- Deployed as a **AWS Lambda Function URL** where it's run as a serverless application for $0 / month.
+- Utilizes **CloudFront** & **Route 53** for distribution and routing at https://api.jyablonski.dev.
   
 <img src="https://github.com/user-attachments/assets/eed80b93-defc-427a-9dd0-078ddde836ae" alt="API Admin Panel" width="1200" height="600"/>
+
+
 
 ---
 
@@ -99,7 +102,7 @@ graph LR;
 
 - Built with **Dash (Plotly)** to visualize trends and metrics.
 - Fully interactive with filtering and drill-down capabilities.
-- Hosted as a long-running **ECS Fargate** service behind an **ALB** and routed via **Route 53**.
+- Hosted as a long-running **ECS Fargate** service behind an **ALB** and routed via **Route 53** to https://nbadashboard.jyablonski.dev.
 
 <img src="https://github.com/user-attachments/assets/fe68e2a7-ea82-443b-bd9b-c0c6f155ad57" alt="Dashboard Screenshot" width="1400" height="600"/>
 
@@ -123,7 +126,7 @@ graph LR;
 
 ### Common Modules
 
-Custom internal Python package: [`jyablonski_common_modules`](https://github.com/jyablonski/jyablonski_common_modules)
+Custom internal Python package: [`jyablonski_common_modules`](https://github.com/jyablonski/jyablonski_common_modules) used by various services for:
 
 - **AWS utilities** (S3, Secrets Manager helpers)
 - **Standardized logging**
@@ -137,7 +140,7 @@ Ensures DRY principles and code consistency across all services.
 
 - **AWS Step Functions** orchestrate the daily pipeline (Ingestion → dbt → ML).
 - Originally used **EventBridge** but upgraded for more robust orchestration.
-- Considered **Apache Airflow**, but opted for Step Functions due to cost-efficiency.
+- **Apache Airflow** would be preferred, but opted for Step Functions due to cost-efficiency.
 
 ---
 
@@ -156,7 +159,7 @@ module "reporting_schema" {
 }
 ```
 
-While not a true analytical DB, Postgres balances performance and cost for the project's current needs.
+Although it's an OLTP Database and not a true data warehouse, it effectively handles analytical workloads for the project while being the most cost-effective solution.
 
 ---
 

@@ -1,14 +1,14 @@
 ---
 title: Twitter
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-04-05
+lastUpdated: 2025-06-13
 ---
 
 :::caution[Not In Use]
 This Data Source is no longer in use as of Q1 2025
 :::
 
-This doc walks through Twitter as a Data Source for the NBA Project
+This page walks through Twitter as a Data Source for the NBA Project
 
 ## Source System
 
@@ -30,7 +30,7 @@ The same Sentiment Analysis process used in the Reddit section was also utilized
 ### Source Tables
 
 - `nba_source` Schema
-    1. `aws_twitter_tweepy_data_source` -> Tweet data pulled via the official Twitter API using the tweepy Package
-    2. `aws_twitter_data_source` -> Tweet data which was web scraped directly from raw tweets
+    1. `twitter_tweepy_legacy` -> Tweet data pulled via the official Twitter API using the tweepy Package
+    2. `twitter_tweets` -> Tweet data which was web scraped directly from raw tweets
 
 ## Data Quality Considerations
