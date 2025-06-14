@@ -1,10 +1,12 @@
 ---
 title: DraftKings
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-03-23
+lastUpdated: 2025-06-14
 ---
 
-This doc walks through DraftKings as a Data Source for the NBA Project
+This page walks through DraftKings as a Data Source for the NBA Project
+
+---
 
 ## Source System
 
@@ -30,7 +32,7 @@ After the data has been pulled, it's stored into Pandas DataFrames and upserted 
 ### Source Tables
 
 - `nba_source` Schema
-    1. `aws_odds_source`
+    1. `draftkings_game_odds`
 
 
 ## Data Quality Considerations

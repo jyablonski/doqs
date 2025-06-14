@@ -1,7 +1,7 @@
 ---
 title: NBA Project
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-04-05
+lastUpdated: 2025-06-14
 tags:
   - AWS
   - Cloud
@@ -19,22 +19,22 @@ sidebar:
 
 This project is an end-to-end data platform delivering insights and predictions for the NBA season via a custom-built interactive dashboard. The system is fully containerized and deployed on AWS using best practices, including CI/CD pipelines, Terraform-managed infrastructure, and automated testing.
 
-Production Services:
+---
 
-- [Frontend](https://nbadashboard.jyablonski.dev)
+### User-Facing Services
+
+- [Frontend Dashboard](https://nbadashboard.jyablonski.dev)
 - [REST API](https://api.jyablonski.dev)
 - [Internal Documentation Site](https://doqs.jyablonski.dev)
 
-Core components include:
+### Core Components
 
-- **Ingestion Script** – Scrapes, loads, and stores raw NBA data.
-- **dbt Project** – Cleans, transforms, and models data.
-- **ML Pipeline** – Generates daily win probability predictions.
-- **REST API** – Serves data to internal and external users.
-- **Frontend Dashboard** – Visualizes trends and metrics.
-- **Infrastructure as Code** – Provisioned and managed via Terraform.
+- [Ingestion Script](https://github.com/jyablonski/nba_elt_ingestion) – Scrapes, loads, and stores raw NBA data.
+- [dbt Project](https://github.com/jyablonski/nba_elt_dbt) – Cleans, transforms, and models data.
+- [ML Pipeline](https://github.com/jyablonski/nba_elt_mlflow) – Generates daily win probability predictions.
+- [Terraform](https://github.com/jyablonski/aws_terraform) – Manages infrastructure as code.
 
-Operational costs are kept minimal (~$12/month), leveraging the AWS Free Tier and optimizing architecture for efficiency and scalability.
+Operational costs are kept minimal (~$12/month), leveraging the AWS Free Tier and optimizing architecture for efficiency and simplicity.
 
 ---
 
@@ -89,9 +89,12 @@ graph LR;
 
 - Exposes endpoints for public consumption and internal admin tasks.
 - Includes a lightweight web app for managing feature flags and other admin controls.
-- Deployed via **AWS Lambda Function URL** with **CloudFront** & **Route 53** for distribution and routing.
+- Deployed as a **AWS Lambda Function URL** where it's run as a serverless application for $0 / month.
+- Utilizes **CloudFront** & **Route 53** for distribution and routing at https://api.jyablonski.dev.
   
 <img src="https://github.com/user-attachments/assets/eed80b93-defc-427a-9dd0-078ddde836ae" alt="API Admin Panel" width="1200" height="600"/>
+
+
 
 ---
 
@@ -99,7 +102,7 @@ graph LR;
 
 - Built with **Dash (Plotly)** to visualize trends and metrics.
 - Fully interactive with filtering and drill-down capabilities.
-- Hosted as a long-running **ECS Fargate** service behind an **ALB** and routed via **Route 53**.
+- Hosted as a long-running **ECS Fargate** service behind an **ALB** and routed via **Route 53** to https://nbadashboard.jyablonski.dev.
 
 <img src="https://github.com/user-attachments/assets/fe68e2a7-ea82-443b-bd9b-c0c6f155ad57" alt="Dashboard Screenshot" width="1400" height="600"/>
 
@@ -123,7 +126,7 @@ graph LR;
 
 ### Common Modules
 
-Custom internal Python package: [`jyablonski_common_modules`](https://github.com/jyablonski/jyablonski_common_modules)
+Custom internal Python package: [`jyablonski_common_modules`](https://github.com/jyablonski/jyablonski_common_modules) used by various services for:
 
 - **AWS utilities** (S3, Secrets Manager helpers)
 - **Standardized logging**
@@ -137,7 +140,7 @@ Ensures DRY principles and code consistency across all services.
 
 - **AWS Step Functions** orchestrate the daily pipeline (Ingestion → dbt → ML).
 - Originally used **EventBridge** but upgraded for more robust orchestration.
-- Considered **Apache Airflow**, but opted for Step Functions due to cost-efficiency.
+- **Apache Airflow** would be preferred, but opted for Step Functions due to cost-efficiency.
 
 ---
 
@@ -145,18 +148,23 @@ Ensures DRY principles and code consistency across all services.
 
 - **AWS RDS PostgreSQL** serves as the core operational DB.
 - All schemas, users, roles, and permissions managed via Terraform.
-- Implements **least privilege** principles with strict role-based access control.
+- Least privilege principles are implemented with strict role-based access control.
   
 ```hcl
 module "reporting_schema" {
   source = "./modules/postgresql/schema"
+
   schema_name   = "reporting"
+  database_name = var.jacobs_rds_db
+  schema_owner  = var.postgres_username
+
   read_access_roles  = [module.rest_api_role_prod.role_name, module.dash_role_prod.role_name]
   write_access_roles = [module.dbt_role_prod.role_name]
+  admin_access_roles = [var.postgres_username]
 }
 ```
 
-While not a true analytical DB, Postgres balances performance and cost for the project's current needs.
+Although it's an OLTP Database and not a true data warehouse, it effectively handles the analytical workloads for the project while being the most cost-effective solution available.
 
 ---
 

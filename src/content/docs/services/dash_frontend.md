@@ -1,11 +1,13 @@
 ---
 title: Dash Frontend
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-03-29
+lastUpdated: 2025-06-14
 ---
 
 
 The Dash frontend service retrieves transformed data from the Postgres database to present charts, graphs, and reports, enabling users to generate insights.
+
+---
 
 ## Architecture
 

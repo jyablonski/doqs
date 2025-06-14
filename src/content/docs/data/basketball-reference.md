@@ -1,10 +1,12 @@
 ---
 title: basketball-reference
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-04-05
+lastUpdated: 2025-06-14
 ---
 
-This doc walks through basketball-reference as a Data Source for the NBA Project
+This page walks through basketball-reference as a Data Source for the NBA Project
+
+---
 
 ## Source System
 
@@ -31,14 +33,15 @@ After the data has been pulled, it's stored into Pandas DataFrames and upserted 
 ### Source Tables
 
 - `nba_source` Schema
-   1. `aws_adv_stats_source` -> Team Advanced Stats
-   2. `aws_boxscores_source` -> Boxscore Data
-   3. `aws_injury_data_source` -> Injury Data
-   4. `aws_pbp_data_source` -> PBP Event Data
-   5. `aws_schedule_source` -> Schedule Data
-   6. `aws_shooting_stats_source` -> Aggregated Player Shooting Stats
-   7. `aws_stats_source` -> Aggregated Player Stats
-   8. `aws_transactions_source` -> NBA League Transactions
+   1. `bbref_player_boxscores` -> Boxscore Data
+   2. `bbref_player_injuries` -> Injury Data
+   3. `bbref_player_pbp` -> PBP Event Data
+   4. `bbref_player_shooting_stats` -> Aggregated Player Shooting Stats
+   5. `bbref_player_stats_snapshot` -> Aggregated Player Stats Snapshot
+   6. `bbref_league_schedule` -> Schedule Data
+   7. `bbref_league_transactions` -> League Transactions such as trades, free agent signings etc
+   8. `bbref_team_adv_stats_snapshot` -> Team Advanced Stats Snapshot
+   9. `bbref_team_opponent_shooting_stats` -> Team Opponent Shooting Stats
 
 ## Data Quality Considerations
 
