@@ -7,6 +7,8 @@ lastUpdated: 2025-06-14
 
 Doqs is an internal site written in Starlight to store documentation on the NBA ELT Project
 
+---
+
 ## Architecture
 
 ``` mermaid

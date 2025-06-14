@@ -1,7 +1,7 @@
 ---
 title: Twitter
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-06-13
+lastUpdated: 2025-06-14
 ---
 
 :::caution[Not In Use]
@@ -9,6 +9,8 @@ This Data Source is no longer in use as of Q1 2025
 :::
 
 This page walks through Twitter as a Data Source for the NBA Project
+
+---
 
 ## Source System
 

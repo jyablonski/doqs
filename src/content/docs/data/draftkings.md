@@ -1,10 +1,12 @@
 ---
 title: DraftKings
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-06-13
+lastUpdated: 2025-06-14
 ---
 
 This page walks through DraftKings as a Data Source for the NBA Project
+
+---
 
 ## Source System
 

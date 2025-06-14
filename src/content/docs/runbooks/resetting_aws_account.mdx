@@ -1,20 +1,22 @@
 ---
 title: Resetting AWS Account
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-06-13
+lastUpdated: 2025-06-14
 ---
 
 import { Image } from 'astro:assets';
 import { Steps } from '@astrojs/starlight/components';
 import route_53 from "../../../assets/route53.png";
 
-This page walks through how to reset the AWS Account used for the NBA Project.
+This page walks through how to reset the AWS Account used for the NBA Project. This process creates a new AWS Account with a new email address, deletes all resources in the old account, and then re-creates the infrastructure in the new account to workaround the 12 month limit on the AWS Free Tier.
+
+---
 
 ## Runbook Steps
 
 <Steps>
 
-1. Run Part 1 of the SQL Script (code below) to save *all* source data from
+1. Run Part 1 of the SQL Script (code below) to save *all* source data from the database, including:
    1. `nba_source` Schema Tables
    2. `ml_models` Schema Tables
    3. `public` Schema Tables

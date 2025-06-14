@@ -1,7 +1,7 @@
 ---
 title: NBA Project
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-06-13
+lastUpdated: 2025-06-14
 tags:
   - AWS
   - Cloud
@@ -19,20 +19,20 @@ sidebar:
 
 This project is an end-to-end data platform delivering insights and predictions for the NBA season via a custom-built interactive dashboard. The system is fully containerized and deployed on AWS using best practices, including CI/CD pipelines, Terraform-managed infrastructure, and automated testing.
 
-Production Services:
+---
 
-- [Frontend](https://nbadashboard.jyablonski.dev)
+### User-Facing Services
+
+- [Frontend Dashboard](https://nbadashboard.jyablonski.dev)
 - [REST API](https://api.jyablonski.dev)
 - [Internal Documentation Site](https://doqs.jyablonski.dev)
 
-Core components include:
+### Core Components
 
-- **Ingestion Script** – Scrapes, loads, and stores raw NBA data.
-- **dbt Project** – Cleans, transforms, and models data.
-- **ML Pipeline** – Generates daily win probability predictions.
-- **REST API** – Serves data to internal and external users.
-- **Frontend Dashboard** – Visualizes trends and metrics.
-- **Infrastructure as Code** – Provisioned and managed via Terraform.
+- [Ingestion Script](https://github.com/jyablonski/nba_elt_ingestion) – Scrapes, loads, and stores raw NBA data.
+- [dbt Project](https://github.com/jyablonski/nba_elt_dbt) – Cleans, transforms, and models data.
+- [ML Pipeline](https://github.com/jyablonski/nba_elt_mlflow) – Generates daily win probability predictions.
+- [Terraform](https://github.com/jyablonski/aws_terraform) – Manages infrastructure as code.
 
 Operational costs are kept minimal (~$12/month), leveraging the AWS Free Tier and optimizing architecture for efficiency and simplicity.
 
@@ -148,18 +148,23 @@ Ensures DRY principles and code consistency across all services.
 
 - **AWS RDS PostgreSQL** serves as the core operational DB.
 - All schemas, users, roles, and permissions managed via Terraform.
-- Implements **least privilege** principles with strict role-based access control.
+- Least privilege principles are implemented with strict role-based access control.
   
 ```hcl
 module "reporting_schema" {
   source = "./modules/postgresql/schema"
+
   schema_name   = "reporting"
+  database_name = var.jacobs_rds_db
+  schema_owner  = var.postgres_username
+
   read_access_roles  = [module.rest_api_role_prod.role_name, module.dash_role_prod.role_name]
   write_access_roles = [module.dbt_role_prod.role_name]
+  admin_access_roles = [var.postgres_username]
 }
 ```
 
-Although it's an OLTP Database and not a true data warehouse, it effectively handles analytical workloads for the project while being the most cost-effective solution.
+Although it's an OLTP Database and not a true data warehouse, it effectively handles the analytical workloads for the project while being the most cost-effective solution available.
 
 ---
 

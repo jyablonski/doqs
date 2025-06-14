@@ -1,12 +1,13 @@
 ---
 title: ML Pipeline
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-03-29
+lastUpdated: 2025-06-14
 ---
 
 The ML Pipeline is a Python Service which generates win predictions for upcoming NBA games
 
 ---
+
 ## Architecture
 
 ### Database Usage
