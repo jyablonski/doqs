@@ -1,7 +1,7 @@
 ---
 title: Doqs
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-04-10
+lastUpdated: 2025-06-14
 ---
 
 
@@ -32,6 +32,16 @@ Starlight enables a very fast initial setup process and offers an elegant soluti
 To enable the use of [Mermaid Diagrams](https://mermaid.js.org/) throughout the site, a custom remark plugin in the codebase transforms mermaid-labeled code blocks into HTML `<div>` elements. 
 
 - To turn those `<div>` elements into diagrams, the Mermaid JavaScript library is loaded on every page via a `<script>` tag attached to the `<head>` of every page. This external script detects these elements and renders them as diagrams in the browser.
+
+### .md vs .mdx
+
+Starlight supports both `.md` and `.mdx` files for writing documentation pages. The main difference is that `.mdx` files allow you to embed React components directly within Markdown content, while `.md` files are strictly Markdown.
+
+Some useful components such as `<Tabs>`, `<Steps>`, and `<FileTree>` are available only in `.mdx` files, allowing for more interactive and dynamic documentation experiences.
+
+- For pages where you want to include these interractive components, you should use `.mdx` files.
+- For all other pages that only require Markdown content, you can use `.md` files.
+
 
 ## Libraries
 
