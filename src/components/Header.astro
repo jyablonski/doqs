@@ -1,0 +1,71 @@
+---
+const { author, lastUpdated, tags } = Astro.props;
+console.log('Header props:', Astro.props);
+
+const formattedDate = lastUpdated
+    ? new Date(lastUpdated).toLocaleDateString(undefined, {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+      })
+    : null;
+---
+
+<header
+    class="meta sl-flex"
+    style="border-bottom: 1px solid var(--sl-color-gray-6); padding-bottom: 1rem; margin-bottom: 2rem;"
+>
+    <table>
+        <tbody>
+            {
+                author && (
+                    <tr>
+                        <th align="left" style="padding-right: 1rem;">
+                            Author
+                        </th>
+                        <td>{author}</td>
+                    </tr>
+                )
+            }
+            {
+                formattedDate && (
+                    <tr>
+                        <th align="left" style="padding-right: 1rem;">
+                            Last Updated
+                        </th>
+                        <td>{formattedDate}</td>
+                    </tr>
+                )
+            }
+            {
+                tags && tags.length > 0 && (
+                    <tr>
+                        <th align="left" style="padding-right: 1rem;">
+                            Tags
+                        </th>
+                        <td>{tags.join(", ")}</td>
+                    </tr>
+                )
+            }
+        </tbody>
+    </table>
+</header>
+
+<style>
+    header.meta {
+        font-size: var(--sl-text-sm);
+        color: var(--sl-color-gray-3);
+    }
+    table {
+        border-collapse: collapse;
+    }
+    th {
+        font-weight: 600;
+        text-align: left;
+        padding-right: 1rem;
+        vertical-align: top;
+    }
+    td {
+        vertical-align: top;
+    }
+</style>

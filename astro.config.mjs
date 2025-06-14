@@ -57,7 +57,7 @@ export default defineConfig({
 			],
 			// enable this if you want to set a footer up across all pages
 			// components: {
-			// 	// Footer: './src/components/Footer.astro',
+			// 	Footer: './src/components/Footer.astro',
 			// 	Header: './src/components/Header.astro'
 			// },
 		}),
