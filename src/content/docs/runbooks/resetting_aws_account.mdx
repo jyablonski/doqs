@@ -1,12 +1,16 @@
 ---
 title: Resetting AWS Account
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-06-14
+lastUpdated: 2025-07-26
 ---
 
 import { Image } from 'astro:assets';
 import { Steps } from '@astrojs/starlight/components';
 import route_53 from "../../../assets/route53.png";
+
+:::caution[Pending]
+This Runbook may not be needed in the future as the AWS Free Tier has [completely changed](https://aws.amazon.com/about-aws/whats-new/2025/07/aws-free-tier-credits-month-free-plan/) as of July 2025
+:::
 
 This page walks through how to reset the AWS Account used for the NBA Project. This process creates a new AWS Account with a new email address, deletes all resources in the old account, and then re-creates the infrastructure in the new account to workaround the 12 month limit on the AWS Free Tier.
 
@@ -23,7 +27,7 @@ This page walks through how to reset the AWS Account used for the NBA Project. T
    - **NOTE** the dbt tables can always be refreshed as long as the source data is extracted, so those aren't pulled here
 2. Run `terraform destroy` to delete infrastructure in the current AWS Account
 3. Run `aws-nuke -c aws_nuke.yml --no-dry-run` to delete all non-Terraform resources in the current AWS Account
-   1. Make sure all fkn s3 buckets are deleted that was a bitch last time
+   1. Ensure all S3 Buckets are deleted before proceeding to the next step
       1. Either run `aws s3 rm s3://example-bucket --recursive` to remove all bucket contents, or manually press `Empty` on each bucket.
 4. Create new `example@gmail.com` email
 5. Create new AWS Account w/ new email
@@ -37,7 +41,7 @@ This page walks through how to reset the AWS Account used for the NBA Project. T
 13. Update Keys in Terraform Repo & Terraform Cloud
 14. Run `terraform apply` to build all infrastructure in New Account (1st run)
     - **NOTE** This will likely fail on ECS Services as the Docker Images are missing. They'll be added later
-15. Update `jyablonski.dev` Route53 Record to point to provided Google Domain DNS Endpoints
+15. Go to [Squarespace](https://account.squarespace.com/domains/managed/jyablonski.dev/dns/domain-nameservers) and update go to DNS -> Domain Nameservers, and update them based on the `NS` values in the Route 53 Hosted Zone
     - <Image src={route_53} alt="AWS Route 53 Logo" loading="lazy" decoding="async" class="w-full h-auto" />
 16. Add `jyablonski9@gmail.com` Email Verified Identity in SES manually & accept email in inbox afterwards
     - [AWS SES Link](https://us-east-1.console.aws.amazon.com/ses/home?region=us-east-1#/identities)
@@ -56,39 +60,29 @@ This page walks through how to reset the AWS Account used for the NBA Project. T
 
 </Steps>
 
-## Troubleshooting
-
-Process took 5 hours in August 2023 - ran into the following issues:
-- AWS changed default S3 Permissions between August 2022 and August 2023.  A lot of my buckets didnt work in August 2023 when i tried to create them, something related to ACLs.  This took probably 2 extra hours of bs to figure out and finally get it working.
-- Various S3 Buckets in old account didnt get deleted before I deactivated the account; had to rename these buckets in the new account.
-- Backfilling the `id` serial tables that the REST API uses was a bitch without Migrations
-- Like half the Repos still had Access/Secret Key Auth for CI / CD instead of the IAM Role so this took like an extra hour to build that on the fly so it's doing it the right way with OIDC
-- Without the S3 permissions or bucket renaming issues, this process should take < 1 hour
-
 ## SQL Script Code
 
 <details>
 <summary>SQL Save & Reload Script</summary>
 
 
-``` sql
+``` py
 from datetime import datetime
 import os
 
-from jyablonski_common_modules.sql import sql_connection, write_to_sql
+from jyablonski_common_modules.sql import create_sql_engine
 import pandas as pd
 
-engine = sql_connection(
+engine = create_sql_engine(
     database=os.environ.get("RDS_DB"),
     schema="nba_source",
     user=os.environ.get("RDS_USER"),
-    pw=os.environ.get("RDS_PW"),
+    password=os.environ.get("RDS_PW"),
     host=os.environ.get("IP"),
+    port=17841,
 )
 
-ml_models_tables = [
-    "ml_game_predictions",
-]
+ml_models_tables = ["ml_game_predictions"]
 
 nba_prod_tables = [
     "feature_flags",
@@ -97,31 +91,36 @@ nba_prod_tables = [
     "incidents_audit",
     "rest_api_users",
     "rest_api_users_audit",
+    "shiny_feature_flags",
     "user_predictions",
     "user_predictions_audit",
 ]
 
 nba_source_tables = [
-    "aws_adv_stats_source",
-    "aws_boxscores_source",
-    "aws_contracts_source",
-    "aws_injury_data_source",
-    "aws_odds_source",
-    "aws_opp_stats_source",
-    "aws_pbp_data_source",
-    "aws_player_attributes_source",
-    "aws_preseason_odds_source",
-    "aws_reddit_comment_data_source",
-    "aws_reddit_data_source",
-    "aws_schedule_source",
-    "aws_shooting_stats_source",
-    "aws_stats_source",
-    "aws_team_attributes_source",
-    "aws_transactions_source",
-    "aws_twitter_data_source",
-    "aws_twitter_tweepy_data_source",
+    "player_attributes",
+    "play_in_details",
+    "boxscores",
+    "internal_player_attributes",
+    "reddit_posts",
+    "reddit_comments",
+    "bbref_player_contracts",
+    "bbref_league_transactions",
+    "bbref_player_stats_snapshot",
+    "bbref_team_opponent_shooting_stats",
+    "bbref_team_preseason_odds",
+    "bbref_player_pbp",
+    "internal_league_inactive_dates",
+    "twitter_tweets",
+    "twitter_tweepy_legacy",
+    "bbref_player_boxscores",
+    "bbref_team_adv_stats_snapshot",
     "aws_twitter_tweets_source",
-    "inactive_dates",
+    "internal_team_top_players",
+    "internal_team_attributes",
+    "draftkings_game_odds",
+    "bbref_player_shooting_stats",
+    "bbref_player_injuries",
+    "bbref_league_schedule",
     "staging_seed_player_attributes",
     "staging_seed_team_attributes",
     "staging_seed_top_players",
@@ -133,39 +132,39 @@ public_tables = [
 ]
 
 
--- PART 1
--- RUN THIS BEFORE old AWS Account is destroyed to save the data
 def store_sql_table(connection, table: str, schema: str):
     todays_date = datetime.now().date()
+    year = todays_date.year
+    output_dir = f"tables/{year}/{schema}"
+    output_path = f"{output_dir}/{table}-{todays_date}.parquet"
 
     try:
-        df = pd.read_sql(f"select * from {schema}.{table};", con=connection)
-        print(f"Queried {len(df)} Records from {schema}.{table}")
+        df = pd.read_sql(f"SELECT * FROM {schema}.{table};", con=connection)
+        print(f"Queried {len(df)} records from {schema}.{table}")
 
-        df.to_parquet(f"sql/tables/{schema}/{table}-{todays_date}.parquet")
-        print(
-            f"Wrote {schema}.{table} to tables/{schema}/{table}-{todays_date}.parquet"
-        )
+        # Create directory if it doesn't exist
+        os.makedirs(output_dir, exist_ok=True)
 
-        pass
+        df.to_parquet(output_path)
+        print(f"Wrote {schema}.{table} to {output_path}")
+
     except BaseException as e:
-        print(f"Error Occurred while Reading {schema}.{table}, {e}")
-        raise e
+        print(f"Error occurred while reading {schema}.{table}: {e}")
+        raise
 
--- PART 2
--- RUN THIS AFTER new AWS Account is created & RDS Database is available to reload the data
+
 with engine.connect() as connection:
     for table in ml_models_tables:
-        store_sql_table(connection=connection, table=table, schema="ml_models")
+        store_sql_table(connection=connection, table=table, schema="ml")
 
     for table in nba_prod_tables:
-        store_sql_table(connection=connection, table=table, schema="nba_prod")
+        store_sql_table(connection=connection, table=table, schema="marts")
 
     for table in nba_source_tables:
         store_sql_table(connection=connection, table=table, schema="nba_source")
 
     for table in public_tables:
-        store_sql_table(connection=connection, table=table, schema="nba_prod")
+        store_sql_table(connection=connection, table=table, schema="marts")
 ```
 
 </details>

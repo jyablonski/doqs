@@ -1,7 +1,7 @@
 ---
 title: Database User Permissions
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-06-14
+lastUpdated: 2025-07-26
 ---
 
 This page outlines how database user permissions are structured and managed in Postgres using Terraform.
@@ -32,11 +32,11 @@ All permissions are managed at the schema level to maintain a clean and scalable
 
 Permissions are categorized into three distinct levels:
 
-1. **Read Only** - For services that only need to query data.
+1. Read Only - For services that only need to query data.
 
-2. **Read + Write** - For services that need to both query and modify data within specific schemas.
+2. Read + Write - For services that need to both query and modify data within specific schemas.
 
-3. **Admin** - For roles requiring elevated privileges to manage schema-level operations (e.g., altering or dropping tables etc).
+3. Admin - For roles requiring elevated privileges to manage schema-level operations (e.g., altering or dropping tables etc).
 
 ### Examples
 - dbt: Requires read-only access to source schemas but admin access to marts.
@@ -77,7 +77,7 @@ module "marts_schema" {
 
 In Postgres, traditional grants only apply to existing tables or views within a schema at the time the grant is issued.
 
-To handle **future grants**—permissions on objects that will be created later—you can leverage **default privileges**. These allow you to define automatic permissions on future tables, views, or other objects within a schema.
+To handle future grants—permissions on objects that will be created later—you can leverage default privileges. These allow you to define automatic permissions on future tables, views, or other objects within a schema.
 
 ### Key Points
 - Default privileges assign specific grants to a role for any objects created in the future within a given schema.
@@ -86,10 +86,10 @@ To handle **future grants**—permissions on objects that will be created later�
 For example, you can configure a role to automatically receive `SELECT` or `INSERT` privileges on any future tables in a schema.
 
 ### Comparison
-- In **Postgres**:  
+- In Postgres:  
   You set this via `ALTER DEFAULT PRIVILEGES` within the schema.
 
-- In **Snowflake**:  
+- In Snowflake:  
   The concept is more explicit and handled with specific statements such as:  
   ```sql
   GRANT SELECT, INSERT ON FUTURE TABLES IN SCHEMA x TO ROLE y;
