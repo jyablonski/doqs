@@ -128,11 +128,11 @@ curl -H "Accept: application/json" https://api.jyablonski.dev/v1/league/game_typ
 
 ### Common Modules
 
-Custom internal Python package: [`jyablonski_common_modules`](https://github.com/jyablonski/jyablonski_common_modules) used by various services for:
+Custom internal Python package [`jyablonski_common_modules`](https://github.com/jyablonski/jyablonski_common_modules) used by various services for:
 
 - AWS utilities (S3, Secrets Manager helpers)
 - Standardized logging
-- Postgres connection management & upserts
+- Postgres connection management & upsert functions
 
 Ensures DRY principles and code consistency across services.
 
