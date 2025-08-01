@@ -30,16 +30,16 @@ All permissions are managed at the schema level to maintain a clean and scalable
 
 ## Permissions Model
 
-Permissions are categorized at a schema-level into three distinct groups:
+Permissions are categorized and managed at the schema-wide level into three distinct groups:
 
 1. Read Only - For services that only need to query data.
 2. Read + Write - For services that need to both query and modify data within specific schemas.
-3. Admin - For roles requiring elevated privileges to manage schema-level operations (e.g., altering or dropping tables etc).
+3. Admin - For roles requiring elevated privileges for things like dropping tables
 
 ### Examples
-- dbt: Requires read-only access to source schemas but admin access to marts.
-- Ingestion Scripts: Require read + write access to source schemas for data loading tasks.
-- Admin Users: Require admin access for governance and maintenance tasks.
+- dbt: Requires read-only access to source schemas, but admin access to Marts for operations like dropping tables etc
+- Ingestion Script: Requires read + write access to source schemas for data loading tasks.
+- REST API: Requires read + write access to Marts Schema for fetching data and performing various table updates 
 
 ---
 
