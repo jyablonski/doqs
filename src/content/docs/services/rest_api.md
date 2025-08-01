@@ -11,18 +11,24 @@ The REST API is a Python Service used to publicly serve the enriched & transform
 
 ``` mermaid
 graph LR
-    UserFacing[User Traffic] -->|Request| CF[CloudFront Distribution] --> API[REST API Service]
+    User[User Traffic] -->|Request| CF[CloudFront Distribution]
+    CF --> API[REST API Service]
     API --> CF
-    CF -->|Response| UserFacing
+    CF -->|Response| User
 
-    subgraph VPC[AWS VPC]
-        DB[Postgres Database]
-        Redis[Redis Database]
+    subgraph AWS_VPC[AWS VPC]
+        DB[Postgres]
+        Redis[Redis]
         API
     end
 
     DB --> API
     Redis --> API
+
+    style AWS_VPC fill:#89888f,stroke:#444444,stroke-width:2px
+    style API fill:#d6d6d6,stroke:#444444,stroke-width:1.5px
+    style DB fill:#d6d6d6,stroke:#444444,stroke-width:1.5px
+    style Redis fill:#d6d6d6,stroke:#444444,stroke-width:1.5px
 
 ```
 ---

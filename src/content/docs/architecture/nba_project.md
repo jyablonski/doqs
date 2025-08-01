@@ -44,9 +44,9 @@ Operational costs are minimal (around $1/month), primarily by leveraging the AWS
 
 ### 1. Data Ingestion
 
-- Python Script using Pandas, SQLAlchemy, and various other packages to gather data from various sources
+- Python Script using Pandas, SQLAlchemy, and various other packages to gather data from a series of sources
 - Data is ingested into a remote Postgres Database and backed up to S3
-- Utilizes a feature flag table to determine what data to pull & store on each run
+- Utilizes a feature flag table to determine what data to pull on each run
 - Ran via ECS Fargate as part of the daily pipeline orchestrated with AWS Step Functions
 
 > *Note: The NBA blocks AWS IPs from accessing their API, necessitating custom scraping solutions.*
@@ -56,7 +56,7 @@ Operational costs are minimal (around $1/month), primarily by leveraging the AWS
 ### 2. dbt Transformations
 
 - Models source data into Fact and Dimension tables, followed by Prep and Mart layers
-- Implements [dbt-expectations](https://github.com/metaplane/dbt-expectations) for data quality tests
+- Utilizes [dbt-expectations](https://github.com/metaplane/dbt-expectations) for data quality tests
 - Prep layer isolates and validates transformed models early, preventing data quality issues from propagating to the Mart layer and downstream services
 - Mart layer feeds both the REST API & Frontend Dashboard
 - Ran via ECS Fargate as part of the daily pipeline orchestrated with AWS Step Functions
@@ -76,7 +76,7 @@ graph LR;
 
 - Python Script which pulls upcoming games from Postgres and generates win probability predictions using a Logistic Regression model built with scikit-learn
 - Factors in team performance, rest days, and injury reports.
-- Outputs are stored back to Postgres and served by REST API & Frontend Dashboard
+- Predictions are stored back to Postgres and served by REST API & Frontend Dashboard
 - Ran via ECS Fargate as part of the daily pipeline orchestrated with AWS Step Functions.
 
 ---

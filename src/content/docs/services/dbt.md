@@ -15,10 +15,11 @@ The dbt project transforms and enriches source data in the database, creating ne
 
 ``` mermaid
 graph LR
-    subgraph DB[Postgres Database]
+
+    subgraph PostgresDB[Postgres]
         NBA[Source]
         
-        subgraph dbt
+        subgraph DBT_Models[dbt]
             FACT[Fact]
             DIM[Dimension]
             PREP[Prep]
@@ -31,8 +32,15 @@ graph LR
         PREP --> MART
     end
 
-    MART --> DASH[Dash Frontend Service]
-    MART --> API[REST API Service]
+    subgraph Downstream_Consumers[Downstream Consumers]
+        MART --> DASH[Dash Frontend Service]
+        MART --> API[REST API Service]
+    end
+
+    style PostgresDB fill:#89888f,stroke:#444,stroke-width:2px
+    style DBT_Models fill:#d6d6d6,stroke:#444,stroke-width:1.5px
+    style Downstream_Consumers fill:#f5f5f5,stroke:#444,stroke-width:1.5px
+
 ```
 
 ### ELT Pipeline Orchestration

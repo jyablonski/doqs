@@ -12,15 +12,16 @@ The Ingestion Script is responsible for all source data ingestion for the NBA EL
 
 ``` mermaid
 graph LR
-    subgraph DS[Data Sources]
+
+    subgraph Data_Sources[Data Sources]
         A[Basketball-Reference]
         B[DraftKings]
         C[Reddit]
     end
 
-    subgraph DD[Data Destinations]
+    subgraph Data_Destinations[Data Destinations]
         DB[Postgres Database]
-        S3[S3]
+        S3[S3 Bucket]
     end
 
     A --> INGEST[Ingestion Script]
@@ -28,6 +29,9 @@ graph LR
     C --> INGEST
     INGEST --> DB
     INGEST --> S3
+
+    style Data_Sources fill:#d6d6d6,stroke:#444,stroke-width:1.5px
+    style Data_Destinations fill:#f5f5f5,stroke:#444,stroke-width:1.5px
 
 
 ```

@@ -13,19 +13,24 @@ The Dash frontend service retrieves transformed data from the Postgres database 
 
 ``` mermaid
 graph LR
-    User[User Traffic] -->|Request| ALB[Application Load Balancer]
-    ALB -->|Response| User
-    ALB --> DASH[Dash Frontend Service]
-    DASH --> ALB
-    DB[Postgres Database] --> DASH
-    subgraph VPC[AWS VPC]
-        ALB
+    User[User Traffic] -->|Request| DASH[Dash Frontend Service]
+    DASH -->|Response| User
+
+    DASH --> DB[Postgres]
+    DB --> DASH
+
+    subgraph AWS_VPC[AWS VPC]
         DB
-        subgraph ECSBox[ECS]
-            DASH
-        end
     end
-  style VPC fill:#89888f,stroke:#444444,stroke-width:2px
+
+    subgraph GCP[GCP VM]
+        DASH
+    end
+
+    style AWS_VPC fill:#89888f,stroke:#444444,stroke-width:2px
+    style GCP fill:#d6d6d6,stroke:#444444,stroke-width:2px
+
+
 ```
 
 ## How It Works
@@ -69,7 +74,7 @@ Hover labels need to be manually configured for each plot. Here's an example of 
 The Dash Frontend is hosted in GCP on a forever free-tier VM which runs the service 24/7
 
 - This allows for a $0 / month hosting solution for the service
-- This was previously hosted on AWS using an ECS service with an EC2 Auto Scaling Group behind an Application Load Balancer, but IPv4 changes have increased the cost to around $15 per month which is too expensive for long-term hosting
+- This was previously hosted on AWS using an ECS service with an EC2 Auto Scaling Group behind an Application Load Balancer, but [IPv4](https://aws.amazon.com/about-aws/whats-new/2024/02/aws-free-tier-750-hours-free-public-ipv4-addresses/) and AWS [free-tier changes](https://aws.amazon.com/about-aws/whats-new/2025/07/aws-free-tier-credits-month-free-plan/) have increased the cost to around $25 per month which is too expensive for long-term hosting, so I opted for alternative options
 
 Route 53 maps the https://nbadashboard.jyablonski.dev subdomain to the GCP VM's external IP, allowing the dashboard to be accessed via a custom domain across cloud environments.
 
@@ -84,4 +89,4 @@ After a PR is merged, the continuous deployment (CD) pipeline performs the follo
 3. SSHs into the GCP VM to pull the new changes and restart the service
 
 > _Note:_  
-For larger projects a more sophisticated deployment process would be ideal here like blue / green or a rolling deploy, but because this service only runs on a single VM this is simple enough to support the project
+For larger projects a more sophisticated deployment process would be ideal here like blue / green or a rolling deploy, but for the scale of this project a single VM works just fine for cost efficiency

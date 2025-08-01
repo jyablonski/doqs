@@ -1,7 +1,7 @@
 ---
 title: ML Pipeline
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-06-14
+lastUpdated: 2025-08-01
 ---
 
 The ML Pipeline is a Python Service which generates win predictions for upcoming NBA games
@@ -13,16 +13,21 @@ The ML Pipeline is a Python Service which generates win predictions for upcoming
 ### Database Usage
 ``` mermaid
 graph LR
-    subgraph A[Postgres Database]
+    subgraph PostgresDB[Postgres]
         T1[ml_tonights_games]
         T2[ml_game_predictions]
     end
 
-    T1 -->|Fetches upcoming games| B[ML Pipeline]
-    B -->|Stores win predictions| T2
+    T1 -->|Fetches upcoming games| ML[ML Pipeline]
+    ML -->|Stores win predictions| T2
 
-    T2 --> C[REST API Service]
-    T2 --> D[Dash Frontend Service]
+    T2 --> API[REST API Service]
+    T2 --> DASH[Dash Frontend Service]
+
+    style PostgresDB fill:#89888f,stroke:#444444,stroke-width:2px
+    style ML fill:#d6d6d6,stroke:#444444,stroke-width:1.5px
+    style API fill:#f5f5f5,stroke:#444444,stroke-width:1.5px
+    style DASH fill:#f5f5f5,stroke:#444444,stroke-width:1.5px
 
 
 ```

@@ -1,7 +1,7 @@
 ---
 title: Database User Permissions
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-07-26
+lastUpdated: 2025-08-01
 ---
 
 This page outlines how database user permissions are structured and managed in Postgres using Terraform.
@@ -11,7 +11,7 @@ This page outlines how database user permissions are structured and managed in P
 
 ## Setup
 
-Terraform is used to manage infrastructure as code (IaC). By leveraging the Postgres provider, we can declaratively provision and manage Postgres resources, including databases, schemas, and roles.
+Terraform is used to manage infrastructure as code (IaC). By leveraging the Postgres provider, Postgres resources can be declaratively provisioned and managed, including databases, schemas, and roles.
 
 ### Custom Terraform Modules
 
@@ -30,12 +30,10 @@ All permissions are managed at the schema level to maintain a clean and scalable
 
 ## Permissions Model
 
-Permissions are categorized into three distinct levels:
+Permissions are categorized at a schema-level into three distinct groups:
 
 1. Read Only - For services that only need to query data.
-
 2. Read + Write - For services that need to both query and modify data within specific schemas.
-
 3. Admin - For roles requiring elevated privileges to manage schema-level operations (e.g., altering or dropping tables etc).
 
 ### Examples
@@ -43,11 +41,9 @@ Permissions are categorized into three distinct levels:
 - Ingestion Scripts: Require read + write access to source schemas for data loading tasks.
 - Admin Users: Require admin access for governance and maintenance tasks.
 
-> Note: Permissions should be managed at the schema level, not at the table level. Schemas are the appropriate abstraction for controlling access in Postgres.
-
 ---
 
-## Terraform Example
+### Terraform Example
 
 Below is an example of how roles and schema permissions are defined using the modules:
 
@@ -73,24 +69,10 @@ module "marts_schema" {
 }
 ```
 
-## Future Grants
+### Future Grants
 
-In Postgres, traditional grants only apply to existing tables or views within a schema at the time the grant is issued.
+In Postgres, traditional `GRANT` statements only apply to tables or views that exist at the time the grant is issued.
 
-To handle future grants—permissions on objects that will be created later—you can leverage default privileges. These allow you to define automatic permissions on future tables, views, or other objects within a schema.
+Default Privileges are used to manage permissions for future objects, which automatically apply specified permissions to tables, views, and other objects created later within a schema.
 
-### Key Points
-- Default privileges assign specific grants to a role for any objects created in the future within a given schema.
-- This ensures that roles automatically receive the appropriate permissions as new tables or views are created.
-
-For example, you can configure a role to automatically receive `SELECT` or `INSERT` privileges on any future tables in a schema.
-
-### Comparison
-- In Postgres:  
-  You set this via `ALTER DEFAULT PRIVILEGES` within the schema.
-
-- In Snowflake:  
-  The concept is more explicit and handled with specific statements such as:  
-  ```sql
-  GRANT SELECT, INSERT ON FUTURE TABLES IN SCHEMA x TO ROLE y;
-  ```
+The Terraform Modules are setup to set both of these permission types when building out Schemas.
