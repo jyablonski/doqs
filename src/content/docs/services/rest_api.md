@@ -53,13 +53,15 @@ graph LR
 
 ## Auth
 
-The REST API uses JWT (JSON Web Tokens) for authentication and authorization.
+The REST API uses JWT (JSON Web Token) for authentication and authorization.
 
 - The `/token` endpoint is used when users attempt to log in.
-- Upon successful authentication, the API returns a JWT that is used for subsequent requests.
+- After validating the user's credentials, the API returns a JWT that is used for subsequent requests.
 
 User information, including the password, is stored in the database. The password is securely hashed and combined with a random salt for enhanced security.
-  
+
+- This approach eliminates the need for third-party user data management
+
 ### User Roles
 - A role is associated with each user in the database.
 - There are two types of roles:
@@ -83,6 +85,7 @@ In production, the REST API is hosted on an AWS Lambda function, with a Lambda F
 - But, it introduces a few limitations:
     - The app becomes stateless, which can lead to cold starts
     - Monitoring metrics with Prometheus is not possible in the same way as with traditional server setups.
+    - Features like OpenID Connect-based authentication (e.g., “Sign-in with Google”) are much more difficult to implement and maintain context
 
 All request logs are stored in AWS Cloudwatch, and traces are tracked via opentelemetry and sent over to Honeycomb where they can be monitored & alerted on.
 
