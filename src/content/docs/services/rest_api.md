@@ -1,7 +1,7 @@
 ---
 title: REST API
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-06-14
+lastUpdated: 2025-08-01
 ---
 
 The REST API is a Python Service used to publicly serve the enriched & transformed data over various endpoints. It also functions as a minimal web application that hosts Admin pages for managing various different features of the project.
@@ -11,18 +11,24 @@ The REST API is a Python Service used to publicly serve the enriched & transform
 
 ``` mermaid
 graph LR
-    UserFacing[User Traffic] -->|Request| CF[CloudFront Distribution] --> API[REST API Service]
+    User[User Traffic] -->|Request| CF[CloudFront Distribution]
+    CF --> API[REST API Service]
     API --> CF
-    CF -->|Response| UserFacing
+    CF -->|Response| User
 
-    subgraph VPC[AWS VPC]
-        DB[Postgres Database]
-        Redis[Redis Database]
+    subgraph AWS_VPC[AWS VPC]
+        DB[Postgres]
+        Redis[Redis]
         API
     end
 
     DB --> API
     Redis --> API
+
+    style AWS_VPC fill:#89888f,stroke:#444444,stroke-width:2px
+    style API fill:#d6d6d6,stroke:#444444,stroke-width:1.5px
+    style DB fill:#d6d6d6,stroke:#444444,stroke-width:1.5px
+    style Redis fill:#d6d6d6,stroke:#444444,stroke-width:1.5px
 
 ```
 ---
@@ -45,22 +51,22 @@ graph LR
 - Restricted to users with the Admin role.
 
 
-## Auth / Security
+## Auth
 
-The REST API uses JWT (JSON Web Tokens) for authentication and authorization.
+The REST API uses JWT (JSON Web Token) for authentication and authorization.
 
-### `/token` Endpoint
 - The `/token` endpoint is used when users attempt to log in.
-- Upon successful authentication, the API returns a JWT that is used for subsequent requests.
+- After validating the user's credentials, the API returns a JWT that is used for subsequent requests.
 
-### User Authentication Flow
-- User Info Storage: User information, including the password, is stored in the database. The password is securely hashed and combined with a random salt for enhanced security.
-  
+User information, including the password, is stored in the database. The password is securely hashed and combined with a random salt for enhanced security.
+
+- This approach eliminates the need for third-party user data management
+
 ### User Roles
-- A role is associated with each user and is stored in the `mart.rest_api_users` table in the database.
+- A role is associated with each user in the database.
 - There are two types of roles:
   - Admin: Users with the Admin role have access to the Admin UI and various management pages.
-  - Consumer: Regular users with the Consumer role have access to general user-facing content and functionality.
+  - Consumer: Users are given this role by default and gain access to login, access the betting Pages, and view their historical betting accuracy
 
 ---
 ## Libraries
@@ -79,6 +85,7 @@ In production, the REST API is hosted on an AWS Lambda function, with a Lambda F
 - But, it introduces a few limitations:
     - The app becomes stateless, which can lead to cold starts
     - Monitoring metrics with Prometheus is not possible in the same way as with traditional server setups.
+    - Features like OpenID Connect-based authentication (e.g., “Sign-in with Google”) are much more difficult to implement and maintain context
 
 All request logs are stored in AWS Cloudwatch, and traces are tracked via opentelemetry and sent over to Honeycomb where they can be monitored & alerted on.
 

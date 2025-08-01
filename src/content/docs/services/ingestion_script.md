@@ -1,7 +1,7 @@
 ---
 title: Ingestion Script
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-06-14
+lastUpdated: 2025-08-01
 ---
 
 The Ingestion Script is responsible for all source data ingestion for the NBA ELT Project
@@ -12,15 +12,16 @@ The Ingestion Script is responsible for all source data ingestion for the NBA EL
 
 ``` mermaid
 graph LR
-    subgraph DS[Data Sources]
+
+    subgraph Data_Sources[Data Sources]
         A[Basketball-Reference]
         B[DraftKings]
         C[Reddit]
     end
 
-    subgraph DD[Data Destinations]
+    subgraph Data_Destinations[Data Destinations]
         DB[Postgres Database]
-        S3[S3]
+        S3[S3 Bucket]
     end
 
     A --> INGEST[Ingestion Script]
@@ -28,6 +29,9 @@ graph LR
     C --> INGEST
     INGEST --> DB
     INGEST --> S3
+
+    style Data_Sources fill:#d6d6d6,stroke:#444,stroke-width:1.5px
+    style Data_Destinations fill:#f5f5f5,stroke:#444,stroke-width:1.5px
 
 
 ```
@@ -51,7 +55,7 @@ The Ingestion Script performs the following tasks:
 
 A feature flag table in the database is managed to support all different kinds of functionality within the project. Specifically for the Ingestion Script, some of these flags are used to determine which endpoints should be scraped. For example:
 
-- During the offseason, the `is_season` flag should be disabled as there's no more games being played. This disables the boxscore & play-by-play data from being scraped in the script.
+- During the offseason, the `is_season` flag should be disabled as there's no more games being played. This disables all game-related data from being scraped.
 - This functionality enables a simple management process for disabling the extraction of this data, or having to do code deploys to comment out various functions during the offseason
 
 ## Libraries
@@ -74,10 +78,10 @@ As soon as the script is finished & all ingestion data has been loaded, the dbt 
 
 For continuous integration (CI), the entire test suite is run on every commit in a pull request.
 
-- It installs UV & the project dependencies on the GitHub Actions runner
+- It installs uv & the project dependencies on the GitHub Actions runner
 - It uses Docker to spin up a Postgres database w/ bootstrap data
 - It then runs the test suite, using the Postgres database to run integration tests
-- The UV environment used by the GitHub Actions runners also gets cached for up to 7 days, enabling faster test suite executions
+- The uv environment used by the GitHub Actions runners also gets cached for up to 7 days, enabling faster test suite executions
 
 After a PR is merged, the continuous deployment (CD) pipeline performs the following steps:
 

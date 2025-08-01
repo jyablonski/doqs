@@ -1,7 +1,7 @@
 ---
 title: NBA Project
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-06-14
+lastUpdated: 2025-08-01
 tags:
   - AWS
   - Cloud
@@ -10,10 +10,6 @@ tags:
 sidebar:
   # Set a custom order for the link (lower numbers are displayed higher up)
   order: 2
-  # Add a badge to the link
-  badge:
-    text: New
-    variant: tip
 ---
 
 
@@ -34,7 +30,7 @@ This project is an end-to-end data platform delivering insights and predictions 
 - [ML Pipeline](https://github.com/jyablonski/nba_elt_mlflow) – Generates daily win probability predictions.
 - [Terraform](https://github.com/jyablonski/aws_terraform) – Manages infrastructure as code.
 
-Operational costs are kept minimal (~$12/month), leveraging the AWS Free Tier and optimizing architecture for efficiency and simplicity.
+Operational costs are minimal (around $1/month), primarily by leveraging the AWS Free Tier and other third-party cloud services.
 
 ---
 
@@ -48,11 +44,10 @@ Operational costs are kept minimal (~$12/month), leveraging the AWS Free Tier an
 
 ### 1. Data Ingestion
 
-- Python-based scraper using **Pandas** and **SQLAlchemy** to gather data from various webpages
-- Data is ingested into **Postgres (RDS)** and backed up to **S3**.
-- Fault-tolerant with Slack-integrated error logging.
-- Feature-flagged via a control table for season/offseason toggles.
-- Deployed as a Docker container and ran via **ECS Fargate**, orchestrated with **AWS Step Functions**.
+- Python Script using Pandas, SQLAlchemy, and various other packages to gather data from a series of sources
+- Data is ingested into a remote Postgres Database and backed up to S3
+- Utilizes a feature flag table to determine what data to pull on each run
+- Ran via ECS Fargate as part of the daily pipeline orchestrated with AWS Step Functions
 
 > *Note: The NBA blocks AWS IPs from accessing their API, necessitating custom scraping solutions.*
 
@@ -60,10 +55,11 @@ Operational costs are kept minimal (~$12/month), leveraging the AWS Free Tier an
 
 ### 2. dbt Transformations
 
-- Models source data into **Fact** and **Dimension** tables, followed by **Prep** and **Mart** layers.
-- Implements **dbt-expectations** for data quality, including metric bounds and row count checks
-- Mart layer feeds both the REST API and frontend dashboard
-- Deployed via **ECS Fargate** as part of the daily pipeline.
+- Models source data into Fact and Dimension tables, followed by Prep and Mart layers
+- Utilizes [dbt-expectations](https://github.com/metaplane/dbt-expectations) for data quality tests
+- Prep layer isolates and validates transformed models early, preventing data quality issues from propagating to the Mart layer and downstream services
+- Mart layer feeds both the REST API & Frontend Dashboard
+- Ran via ECS Fargate as part of the daily pipeline orchestrated with AWS Step Functions
 
 ```mermaid
 graph LR;
@@ -78,31 +74,37 @@ graph LR;
 
 ### 3. ML Pipeline
 
-- Predicts daily win probabilities using a **Logistic Regression** model built with **scikit-learn**.
+- Python Script which pulls upcoming games from Postgres and generates win probability predictions using a Logistic Regression model built with scikit-learn
 - Factors in team performance, rest days, and injury reports.
-- Outputs are stored in Postgres for API & dashboard consumption.
-- Deployed post-dbt transformation via **ECS Fargate**.
+- Predictions are stored back to Postgres and served by REST API & Frontend Dashboard
+- Ran via ECS Fargate as part of the daily pipeline orchestrated with AWS Step Functions.
 
 ---
 
 ### 4. REST API
 
-- Exposes endpoints for public consumption and internal admin tasks.
-- Includes a lightweight web app for managing feature flags and other admin controls.
-- Deployed as a **AWS Lambda Function URL** where it's run as a serverless application for $0 / month.
-- Utilizes **CloudFront** & **Route 53** for distribution and routing at https://api.jyablonski.dev.
+- Python Application which pulls transformed & enriched data from Postgres and serves it over public HTTP endpoints
+- Includes a lightweight web app for users sign in and make betting predictions for upcoming games
+- Also includes Admin pages for managing various aspects of the project, like feature flags
+- Deployed as a serverless application (AWS Lambda) for $0 / month.
+- Utilizes CloudFront & Route 53 for distribution and routing to https://api.jyablonski.dev.
   
 <img src="https://github.com/user-attachments/assets/eed80b93-defc-427a-9dd0-078ddde836ae" alt="API Admin Panel" width="1200" height="600"/>
 
+#### Query Example
 
+``` sh
+curl -H "Accept: application/json" https://api.jyablonski.dev/v1/league/game_types
+
+```
 
 ---
 
 ### 5. Frontend Dashboard (Dash)
 
-- Built with **Dash (Plotly)** to visualize trends and metrics.
+- Python Application built with Dash which pulls data from Postgres to serve various tables, metrics, and graphs
 - Fully interactive with filtering and drill-down capabilities.
-- Hosted as a long-running **ECS Fargate** service behind an **ALB** and routed via **Route 53** to https://nbadashboard.jyablonski.dev.
+- Hosted on a free-tier VM routed via Route 53 to https://nbadashboard.jyablonski.dev.
 
 <img src="https://github.com/user-attachments/assets/fe68e2a7-ea82-443b-bd9b-c0c6f155ad57" alt="Dashboard Screenshot" width="1400" height="600"/>
 
@@ -112,13 +114,13 @@ graph LR;
 
 ### Terraform
 
-- Entire AWS stack provisioned via **Terraform** using custom-built modules for:
+- Entire AWS stack provisioned via Terraform using custom-built modules for:
 
-  - **S3 Buckets**
-  - **IAM Roles (e.g., GitHub Actions runners)**
-  - **ECS Tasks & Services**
-  - **Lambda Functions**
-  - **PostgreSQL & Snowflake Infrastructure**
+  - S3 Buckets
+  - IAM Roles
+  - ECS Tasks & Services
+  - Lambda Functions
+  - PostgreSQL Infrastructure
 
 [Modules Repo](https://github.com/jyablonski/aws_terraform/tree/master/modules)
 
@@ -126,29 +128,29 @@ graph LR;
 
 ### Common Modules
 
-Custom internal Python package: [`jyablonski_common_modules`](https://github.com/jyablonski/jyablonski_common_modules) used by various services for:
+Custom internal Python package [`jyablonski_common_modules`](https://github.com/jyablonski/jyablonski_common_modules) used by various services for:
 
-- **AWS utilities** (S3, Secrets Manager helpers)
-- **Standardized logging**
-- **Postgres connection management & upserts**
+- AWS utilities (S3, Secrets Manager helpers)
+- Standardized logging
+- Postgres connection management & upsert functions
 
-Ensures DRY principles and code consistency across all services.
+Ensures DRY principles and code consistency across services.
 
 ---
 
 ### Orchestration (Step Functions)
 
-- **AWS Step Functions** orchestrate the daily pipeline (Ingestion → dbt → ML).
-- Originally used **EventBridge** but upgraded for more robust orchestration.
-- **Apache Airflow** would be preferred, but opted for Step Functions due to cost-efficiency.
+- AWS Step Functions orchestrates the daily pipeline (Ingestion -> dbt -> ML) for $ 0 / month
+- It triggers each Task to run in ECS Fargate in a free-tier VM
+- Apache Airflow would be preferred, but opted for Step Functions due to cost efficiency
 
 ---
 
 ### Database Management
 
-- **AWS RDS PostgreSQL** serves as the core operational DB.
-- All schemas, users, roles, and permissions managed via Terraform.
-- Least privilege principles are implemented with strict role-based access control.
+- Postgres serves as the core database
+- All schemas, users, roles, and permissions managed via Terraform
+- Least privilege principles are implemented with strict role-based access control
   
 ```hcl
 module "reporting_schema" {
@@ -165,9 +167,3 @@ module "reporting_schema" {
 ```
 
 Although it's an OLTP Database and not a true data warehouse, it effectively handles the analytical workloads for the project while being the most cost-effective solution available.
-
----
-
-## Closing Notes
-
-This project has evolved from a personal learning experiment into a scalable, full-stack data platform. While focused on NBA data, its architecture and components are transferable to other domains or datasets.

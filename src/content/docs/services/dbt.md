@@ -1,7 +1,7 @@
 ---
 title: dbt
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-06-14
+lastUpdated: 2025-08-01
 author: jyablonski
 tags: ["nba", "etl", "internal"]
 ---
@@ -15,10 +15,11 @@ The dbt project transforms and enriches source data in the database, creating ne
 
 ``` mermaid
 graph LR
-    subgraph DB[Postgres Database]
+
+    subgraph PostgresDB[Postgres]
         NBA[Source]
         
-        subgraph dbt
+        subgraph DBT_Models[dbt]
             FACT[Fact]
             DIM[Dimension]
             PREP[Prep]
@@ -31,8 +32,15 @@ graph LR
         PREP --> MART
     end
 
-    MART --> DASH[Dash Frontend Service]
-    MART --> API[REST API Service]
+    subgraph Downstream_Consumers[Downstream Consumers]
+        MART --> DASH[Dash Frontend Service]
+        MART --> API[REST API Service]
+    end
+
+    style PostgresDB fill:#89888f,stroke:#444,stroke-width:2px
+    style DBT_Models fill:#d6d6d6,stroke:#444,stroke-width:1.5px
+    style Downstream_Consumers fill:#f5f5f5,stroke:#444,stroke-width:1.5px
+
 ```
 
 ### ELT Pipeline Orchestration
@@ -46,16 +54,11 @@ graph LR
 
 dbt is a tool that allows you to transform raw data into analytics-ready datasets inside a database using SQL, and incorporates best practices such as version control, modularity, testing, and documentation.
 
-In this project dbt enables dozens of different tables to be built by transforming the raw source data provided by the ingestion script to build out datasets that can be served over the Dash Frontend + REST API.
+In this project dbt enables dozens of different tables to be built by transforming the raw source data provided by the ingestion script to build out enriched datasets that can be served over the REST API & Frontend Dashboard.
 
-All of the processing can be done in dbt so that the downstream applications just have to do a `select * from table` to grab what they need and display the data to end users.
+All of the data processing can be done in dbt so that the downstream applications just have to do a `select * from table` to grab what they need and display the data to end users.
 
 - This significantly improves the user experience and makes for a snappy, responsive feel across the downstream applications
-
-There are already [source freshness tests](https://github.com/jyablonski/nba_elt_dbt/blob/dfac355b2e9d7211567fdcb82b97e759ff8e9c45/models/sources.yml#L78) defined on the source data tables, but these are not currently being run or monitored in production.
-
-- These tests help ensure that your tables contain recent data and will trigger an error if data is missing or delayed. However, the thresholds need to be carefully calibrated—too strict, and you'll get false positives that slow you down with unnecessary manual checks; too loose, and you might miss real data issues.
-- They're disabled for now but might be re-enabled some time in the future
 
 ## Libraries
 

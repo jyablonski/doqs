@@ -1,7 +1,7 @@
 ---
 title: Doqs
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-06-14
+lastUpdated: 2025-08-01
 ---
 
 
@@ -13,10 +13,18 @@ Doqs is an internal site written in Starlight to store documentation on the NBA 
 
 ``` mermaid
 graph LR
-    A[User Traffic] -->|Request| B[Amazon CloudFront]
-    B --> C[S3 Bucket ]
-    C --> B
-    B -->|Response| A
+    User[User Traffic] -->|Request| CF[Amazon CloudFront]
+    CF --> S3[S3 Bucket]
+    S3 --> CF
+    CF -->|Response| User
+
+    subgraph Infra[AWS]
+        CF
+        S3
+    end
+
+    style Infra fill:#89888f,stroke:#444444,stroke-width:2px
+
 
 ```
 
