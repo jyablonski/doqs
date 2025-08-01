@@ -1,7 +1,7 @@
 ---
 title: Dash Frontend
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-07-26
+lastUpdated: 2025-08-01
 ---
 
 
@@ -13,25 +13,19 @@ The Dash frontend service retrieves transformed data from the Postgres database 
 
 ``` mermaid
 graph LR
-    User[User] -->|DNS Lookup| R53[Route 53]
-    R53 -->|Resolves To| GCPVM[GCP VM External IP]
-    GCPVM -->|HTTP Request| DASH[Dashboard Service]
-    DASH -->DB[Postgres Database]
-    DB --> DASH
-    DASH -->|HTTP Response| GCPVM
-    GCPVM -->|Response| User
-
-    subgraph Infra[Infrastructure]
-        R53
-        subgraph GoogleCloud[GCP]
-            GCPVM
+    User[User Traffic] -->|Request| ALB[Application Load Balancer]
+    ALB -->|Response| User
+    ALB --> DASH[Dash Frontend Service]
+    DASH --> ALB
+    DB[Postgres Database] --> DASH
+    subgraph VPC[AWS VPC]
+        ALB
+        DB
+        subgraph ECSBox[ECS]
             DASH
         end
-        DB
     end
-
-    style Infra fill:#89888f,stroke:#444444,stroke-width:2px
-
+  style VPC fill:#89888f,stroke:#444444,stroke-width:2px
 ```
 
 ## How It Works

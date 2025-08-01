@@ -1,7 +1,7 @@
 ---
 title: REST API
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-06-14
+lastUpdated: 2025-08-01
 ---
 
 The REST API is a Python Service used to publicly serve the enriched & transformed data over various endpoints. It also functions as a minimal web application that hosts Admin pages for managing various different features of the project.
@@ -45,22 +45,20 @@ graph LR
 - Restricted to users with the Admin role.
 
 
-## Auth / Security
+## Auth
 
 The REST API uses JWT (JSON Web Tokens) for authentication and authorization.
 
-### `/token` Endpoint
 - The `/token` endpoint is used when users attempt to log in.
 - Upon successful authentication, the API returns a JWT that is used for subsequent requests.
 
-### User Authentication Flow
-- User Info Storage: User information, including the password, is stored in the database. The password is securely hashed and combined with a random salt for enhanced security.
+User information, including the password, is stored in the database. The password is securely hashed and combined with a random salt for enhanced security.
   
 ### User Roles
-- A role is associated with each user and is stored in the `mart.rest_api_users` table in the database.
+- A role is associated with each user in the database.
 - There are two types of roles:
   - Admin: Users with the Admin role have access to the Admin UI and various management pages.
-  - Consumer: Regular users with the Consumer role have access to general user-facing content and functionality.
+  - Consumer: Users are given this role by default and gain access to login, access the betting Pages, and view their historical betting accuracy
 
 ---
 ## Libraries

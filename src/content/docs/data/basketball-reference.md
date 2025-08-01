@@ -1,7 +1,7 @@
 ---
 title: basketball-reference
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-06-14
+lastUpdated: 2025-08-01
 ---
 
 This page walks through basketball-reference as a Data Source for the NBA Project
@@ -45,7 +45,7 @@ After the data has been pulled, it's stored into Pandas DataFrames and upserted 
 
 ## Data Quality Considerations
 
-1. Player names have historically been changed by basketball-reference, which caused issues downstream in dbt on joining & grouping boxscore data
+1. Player names have historically been changed by basketball-reference mid-season, which caused issues downstream in dbt on joining & grouping boxscore data
 
     - For example, they started removing suffixes on names such as Robert Williams III -> Robert Williams
     - There's also inconsistencies with how names are stored, such as:
@@ -55,4 +55,4 @@ After the data has been pulled, it's stored into Pandas DataFrames and upserted 
 
 2. Boxscore & play-by-play data is sometimes not available at 12 pm UTC when the Ingestion Script runs.
 
-    - In these cases, this data must be manually pulled at a later time once the data is made available, and the downstream dbt models must be refreshed afterwards.
+    - In these cases, this data must be backfilled at a later time once the data is made available, and the downstream dbt models must be refreshed afterwards.
