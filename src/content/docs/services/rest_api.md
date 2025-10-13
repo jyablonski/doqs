@@ -77,7 +77,7 @@ User information, including the password, is stored in the database. The passwor
 
 A Helm chart for the application to run on Kubernetes is built but not currently used in production for cost-saving purposes.
 
-It can be found in the `helm/` directory of the repository and includes:
+It can be found in the [helm/](https://github.com/jyablonski/nba_elt_rest_api/tree/master/helm) directory of the repository and includes:
 
 - `values.yaml` files for dev and prod environments
 - HPA support for autoscaling
