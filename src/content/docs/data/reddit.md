@@ -1,7 +1,7 @@
 ---
 title: Reddit
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-06-14
+lastUpdated: 2025-11-24
 ---
 
 This page walks through Reddit as a Data Source for the NBA Project
@@ -32,15 +32,13 @@ After pulling the data, the [nltk](https://www.nltk.org/) Python Package is used
 - This process creates new Sentiment Analysis columns that are stored along every record
 - This enables interesting analytics insights to be found when grouping by Flair and by Average Sentiment (such as fanbases getting hyped after a big win, or becoming really negative after a bad loss)
 
-After the data has been pulled & enriched, it's stored into Pandas DataFrames and upserted into Postgres in the `nba_source` Schema.
-
+After the data has been pulled & enriched, it's stored into Pandas DataFrames and upserted into Postgres in the `bronze` Schema.
 
 ### Source Tables
 
-- `nba_source` Schema
-    1. `reddit_posts` -> Reddit posts
-    2. `reddit_comments` -> Reddit comments
-
+- `bronze` Schema
+  1. `reddit_posts` -> Reddit posts
+  2. `reddit_comments` -> Reddit comments
 
 ## Data Quality Considerations
 

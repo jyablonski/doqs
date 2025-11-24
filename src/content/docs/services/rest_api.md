@@ -1,7 +1,7 @@
 ---
 title: REST API
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-10-13
+lastUpdated: 2025-11-24
 ---
 
 The REST API is a Python Service used to publicly serve the enriched & transformed data over various endpoints. It also functions as a minimal web application that hosts Admin pages for managing various different features of the project.
@@ -37,23 +37,23 @@ graph LR
 
 ## How It Works
 
+The REST API serves NBA ELT pipeline data through multiple endpoints and includes three main components:
+
 ### 1. REST API
 
-- Serves NBA ELT pipeline data via multiple RESTful endpoints.
-- Exposes data related to teams, players, games, betting odds, and user predictions.
-- Endpoints are available to anyone, even without authentication.
+Serves NBA data through RESTful endpoints covering teams, players, games, betting odds, and user predictions. All endpoints are publicly accessible without authentication.
 
 ### 2. Web Application
 
-- Provides a simple frontend where users can:
-  - Create an Account and log in via username and password.
-  - Place simulated (fake) bets on upcoming NBA games based on moneyline odds.
-  - View historical performance and track betting accuracy over time, updated after game results are processed.
+A frontend interface that allows users to:
+
+- Create accounts and log in with username and password
+- Place simulated bets on upcoming NBA games using scraped moneyline odds
+- View historical betting performance and track accuracy, automatically updated after game results are processed
 
 ### 3. Admin Dashboard
 
-- An extension of the Web Application frontend to provide a separate admin UI used to manage project-wide settings and features.
-- Restricted to users with the Admin role.
+A restricted interface for users with Admin role to manage project-wide settings and features.
 
 ## Auth
 

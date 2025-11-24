@@ -1,11 +1,11 @@
 ---
 title: Resetting AWS Account
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-07-26
+lastUpdated: 2025-11-24
 ---
 
-import { Image } from 'astro:assets';
-import { Steps } from '@astrojs/starlight/components';
+import { Image } from "astro:assets";
+import { Steps } from "@astrojs/starlight/components";
 import route_53 from "../../../assets/route53.png";
 
 :::caution[Pending]
@@ -20,9 +20,9 @@ This page walks through how to reset the AWS Account used for the NBA Project. T
 
 <Steps>
 
-1. Run Part 1 of the SQL Script (code below) to save *all* source data from the database, including:
-   1. `nba_source` Schema Tables
-   2. `ml_models` Schema Tables
+1. Run Part 1 of the SQL Script (code below) to save _all_ source data from the database, including:
+   1. `bronze` Schema Tables
+   2. ML Tables in `silver` and `gold` Schemas
    3. `public` Schema Tables
    - **NOTE** the dbt tables can always be refreshed as long as the source data is extracted, so those aren't pulled here
 2. Run `terraform destroy` to delete infrastructure in the current AWS Account
@@ -42,18 +42,24 @@ This page walks through how to reset the AWS Account used for the NBA Project. T
 14. Run `terraform apply` to build all infrastructure in New Account (1st run)
     - **NOTE** This will likely fail on ECS Services as the Docker Images are missing. They'll be added later
 15. Go to [Squarespace](https://account.squarespace.com/domains/managed/jyablonski.dev/dns/domain-nameservers) and update go to DNS -> Domain Nameservers, and update them based on the `NS` values in the Route 53 Hosted Zone
-    - <Image src={route_53} alt="AWS Route 53 Logo" loading="lazy" decoding="async" class="w-full h-auto" />
+    - <Image
+        src={route_53}
+        alt="AWS Route 53 Logo"
+        loading="lazy"
+        decoding="async"
+        class="w-full h-auto"
+      />
 16. Add `jyablonski9@gmail.com` Email Verified Identity in SES manually & accept email in inbox afterwards
     - [AWS SES Link](https://us-east-1.console.aws.amazon.com/ses/home?region=us-east-1#/identities)
 17. Run Liquibase Migrations to build source tables
-18. Run Part 2 of the SQL Script (code below) to store *all* source data into the new RDS Database
+18. Run Part 2 of the SQL Script (code below) to store _all_ source data into the new RDS Database
 19. Update `IAM ROLE` GitHub Actions Secret on the following Repositories:
-    1.  [nba_elt_ingestion](https://github.com/jyablonski/nba_elt_ingestion)
-    2.  [aws_terraform](https://github.com/jyablonski/aws_terraform)
-    3.  [nba_elt_dbt](https://github.com/jyablonski/nba_elt_dbt)
-    4.  [nba_elt_rest_api](https://github.com/jyablonski/nba_elt_rest_api)
-    5.  [nba_elt_mlflow](https://github.com/jyablonski/nba_elt_mlflow)
-    6.  [jyablonski_liquibase](https://github.com/jyablonski/jyablonski_liquibase)
+    1. [nba_elt_ingestion](https://github.com/jyablonski/nba_elt_ingestion)
+    2. [aws_terraform](https://github.com/jyablonski/aws_terraform)
+    3. [nba_elt_dbt](https://github.com/jyablonski/nba_elt_dbt)
+    4. [nba_elt_rest_api](https://github.com/jyablonski/nba_elt_rest_api)
+    5. [nba_elt_mlflow](https://github.com/jyablonski/nba_elt_mlflow)
+    6. [jyablonski_liquibase](https://github.com/jyablonski/jyablonski_liquibase)
 20. Run all CI / CD Pipelines to build & push the Docker Images for each service to ECR
 21. Run `terraform apply` to build any remaining infrastructure in New Account (2nd run)
 22. Profit
@@ -65,8 +71,7 @@ This page walks through how to reset the AWS Account used for the NBA Project. T
 <details>
 <summary>SQL Save & Reload Script</summary>
 
-
-``` py
+```py
 from datetime import datetime
 import os
 
@@ -75,7 +80,7 @@ import pandas as pd
 
 engine = create_sql_engine(
     database=os.environ.get("RDS_DB"),
-    schema="nba_source",
+    schema="bronze",
     user=os.environ.get("RDS_USER"),
     password=os.environ.get("RDS_PW"),
     host=os.environ.get("IP"),
@@ -91,12 +96,11 @@ nba_prod_tables = [
     "incidents_audit",
     "rest_api_users",
     "rest_api_users_audit",
-    "shiny_feature_flags",
     "user_predictions",
     "user_predictions_audit",
 ]
 
-nba_source_tables = [
+bronze_tables = [
     "player_attributes",
     "play_in_details",
     "boxscores",
@@ -154,14 +158,14 @@ def store_sql_table(connection, table: str, schema: str):
 
 
 with engine.connect() as connection:
-    for table in ml_models_tables:
-        store_sql_table(connection=connection, table=table, schema="ml")
+    for table in ml_model_tables:
+        store_sql_table(connection=connection, table=table, schema="gold")
 
-    for table in nba_prod_tables:
-        store_sql_table(connection=connection, table=table, schema="marts")
+    for table in gold_tables:
+        store_sql_table(connection=connection, table=table, schema="gold")
 
-    for table in nba_source_tables:
-        store_sql_table(connection=connection, table=table, schema="nba_source")
+    for table in bronze_tables:
+        store_sql_table(connection=connection, table=table, schema="bronze")
 
     for table in public_tables:
         store_sql_table(connection=connection, table=table, schema="marts")

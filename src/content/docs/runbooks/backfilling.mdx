@@ -1,12 +1,12 @@
 ---
 title: Backfilling
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-06-14
+lastUpdated: 2025-11-24
 authors: [jyablonski]
 tags: [test1, test2]
 ---
 
-import { Image } from 'astro:assets';
+import { Image } from "astro:assets";
 import slack_alert from "../../../assets/slack_alert.png";
 
 This page goes in detail about performing backfills for the NBA ELT Project
@@ -21,27 +21,33 @@ There are 3 separate entities that involve varying degrees of backfilling
 
 The Boxscore + Play-by-Play (PBP) data is sometimes not refreshed in time when the Ingestion Script is triggered at 12 pm UTC every day. When this happens, the script will complete successfully and send an alert to Slack that the data was not available
 
-- <Image src={slack_alert} alt="slack" loading="lazy" decoding="async" class="w-full h-auto" />
+- <Image
+    src={slack_alert}
+    alt="slack"
+    loading="lazy"
+    decoding="async"
+    class="w-full h-auto"
+  />
 
 Later in the day, a backfill for the missing data can be run by executing the following command:
 
-``` sh
+```sh
 python -m scripts.backfill --run_date 2025-01-01
 ```
 
 - This is a Backfill Script which takes in a required `run_date` argument in the format of `YYYY-MM-DD`. It executes the Boxscores + PBP data portion of the Ingestion Script for that run date, and stores the results to Postgres.
 - For example, if you choose a run date of `2025-01-01`, it will pull Boxscore data from games played on `2025-01-01`, and also pull PBP data for those same games.
 
-After ingesting the data into the `nba_source` schema, you may want to manually trigger a dbt refresh to ensure downstream services are immediately serving the latest data.
+After ingesting the data into the `bronze` schema, you may want to manually trigger a dbt refresh to ensure downstream services are immediately serving the latest data.
 
-> *Note: This step is optional—if you choose not to refresh dbt manually, the data will be automatically updated during the next scheduled run of the dbt job.*
+> _Note: This step is optional—if you choose not to refresh dbt manually, the data will be automatically updated during the next scheduled run of the dbt job._
 
 ### dbt
 
 For backfill purposes, to refresh specific models and their downstream dependencies in the dbt project you can run commands like:
 
 - `dbt build --select fact_boxscores+ fact_pbp_data+ --target prod`
-    - This is typically what must be ran after an Ingestion Script backfill
+  - This is typically what must be ran after an Ingestion Script backfill
 - `dbt build --select fact_schedule_data+ --target prod --full-refresh`
 - Adjust this depending on what you want to refresh
 
@@ -50,19 +56,19 @@ If needed, the entire dbt project can be refreshed with:
 - `dbt build --target prod --full-refresh`
 - As of March 2025, a full refresh on the entire project takes about ~4 minutes to run
 
-> *Note: Running a full refresh has no downsides. All models can be rebuilt at any time, ensuring consistent accuracy.*
+> _Note: Running a full refresh has no downsides. All models can be rebuilt at any time, ensuring consistent accuracy._
 
 ### ML Pipeline
 
 The ML Pipeline pulls data from `ml_models.ml_tonights_games` to generate predictions for upcoming games that night. If there was an issue upstream in the NBA ELT Pipeline that affects this table being refreshed properly, then the ML Pipeline will likely fail and not generate predictions for that day.
 
-After addressing the upstream issue and refreshing this table via dbt, you can run the ML Pipeline with the following command: 
+After addressing the upstream issue and refreshing this table via dbt, you can run the ML Pipeline with the following command:
 
 - `python -m src.app` runs the Pipeline as a module and will pull the data, generate the predictions, and upload it back to Postgres in the `ml_models.ml_tonights_games` table
 
 Afterwards, you can verify the data by running the following query:
 
-``` sql
+```sql
 select *
 from ml_models.ml_tonights_games
 order by game_date desc
@@ -77,7 +83,7 @@ However, if you've refreshed the data in the `mart` Layer and want those changes
 
 - This typically results in a 5-10 second downtime for the dashboard, but it will automatically re-sync and be back up shortly after
 
-``` sh
+```sh
 #!/bin/bash
 
 ECS_CLUSTER="jacobs-ecs-ec2-cluster"

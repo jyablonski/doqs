@@ -1,7 +1,7 @@
 ---
 title: Twitter
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-06-14
+lastUpdated: 2025-11-24
 ---
 
 :::caution[Not In Use]
@@ -31,8 +31,8 @@ The same Sentiment Analysis process used in the Reddit section was also utilized
 
 ### Source Tables
 
-- `nba_source` Schema
-    1. `twitter_tweepy_legacy` -> Tweet data pulled via the official Twitter API using the tweepy Package
-    2. `twitter_tweets` -> Tweet data which was web scraped directly from raw tweets
+- `bronze` Schema
+  1. `twitter_tweepy_legacy` -> Tweet data pulled via the official Twitter API using the tweepy Package
+  2. `twitter_tweets` -> Tweet data which was web scraped directly from raw tweets
 
 ## Data Quality Considerations

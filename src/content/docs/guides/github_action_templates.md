@@ -1,7 +1,7 @@
 ---
 title: GitHub Action Templates
 description: Guide for Understanding & implementing GitHub Action Templates
-lastUpdated: 2025-10-30
+lastUpdated: 2025-11-24
 ---
 
 This page walks through GitHub Action Templates, how to use them, and how they are structured within this project.
@@ -246,13 +246,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Run Tests
-        uses: jyablonski/actions/test@v1
-        with:
-          python-version: "3.11"
-          requirements-file: requirements.txt
+        run: make est
 
   deploy:
     needs: test
@@ -262,7 +259,7 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Build and Push Docker Image to ECR
         uses: jyablonski/actions/deploy@v1
