@@ -40,6 +40,11 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - name: Upload to Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
   cd_pipeline:
     name: CD Pipeline
     needs: [ci_pipeline]
