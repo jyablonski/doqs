@@ -64,6 +64,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      # Note: this step installs and builds again here instead of reusing CI artifacts.
+      # Could cache build artifacts from CI job to save time, but leaving as-is for now
       - name: Build project
         run: npm run build
 
@@ -74,6 +76,9 @@ jobs:
           role-session-name: github-doqs-cicd
           aws-region: ${{ env.AWS_REGION }}
 
+      # Sync build artifacts to S3
+      # `--delete` flag removes old files from S3 that are no longer in ./dist/
+      # This keeps the S3 bucket in sync with the local build output
       - name: Upload to S3
         run: aws s3 sync ./dist/ s3://${{ env.BUCKET_NAME }} --delete
 
