@@ -95,8 +95,8 @@ describe("Backfilling Runbook", () => {
       expect(content).toContain("python -m src.app");
     });
 
-    it("should reference ml_tonights_games table", () => {
-      expect(content).toContain("silver.ml_tonights_games");
+    it("should reference ml_game_features table", () => {
+      expect(content).toContain("silver.ml_game_features");
     });
 
     it("should have verification SQL query", () => {

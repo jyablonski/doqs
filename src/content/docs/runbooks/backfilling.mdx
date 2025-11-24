@@ -60,7 +60,7 @@ If needed, the entire dbt project can be refreshed with:
 
 ### ML Pipeline
 
-The ML Pipeline pulls data from `silver.ml_tonights_games` to generate predictions for upcoming games that night. If there was an issue upstream in the NBA ELT Pipeline that affects this table being refreshed properly, then the ML Pipeline will likely fail and not generate predictions for that day.
+The ML Pipeline pulls data from `silver.ml_game_features` to generate predictions for upcoming games that night. If there was an issue upstream in the NBA ELT Pipeline that affects this table being refreshed properly, then the ML Pipeline will likely fail and not generate predictions for that day.
 
 After addressing the upstream issue and refreshing this table via dbt, you can run the ML Pipeline with the following command:
 
