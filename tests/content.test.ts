@@ -1,6 +1,23 @@
 import { describe, it, expect } from "vitest";
-import { readFileSync, readdirSync, existsSync } from "fs";
+import { readFileSync, readdirSync, existsSync, Dirent } from "fs";
 import { join } from "path";
+
+// Helper function to recursively get all markdown files
+function getAllMarkdownFiles(dir: string): string[] {
+  let files: string[] = [];
+  const items = readdirSync(dir, { withFileTypes: true });
+
+  for (const item of items) {
+    const fullPath = join(dir, item.name);
+    if (item.isDirectory()) {
+      files = files.concat(getAllMarkdownFiles(fullPath));
+    } else if (item.name.endsWith(".md") || item.name.endsWith(".mdx")) {
+      files.push(fullPath);
+    }
+  }
+
+  return files;
+}
 
 describe("Documentation Content", () => {
   it("should have an index page", () => {
@@ -11,8 +28,8 @@ describe("Documentation Content", () => {
   it("should have all expected documentation directories", () => {
     const docsPath = join(process.cwd(), "src/content/docs");
     const dirs = readdirSync(docsPath, { withFileTypes: true })
-      .filter((dirent) => dirent.isDirectory())
-      .map((dirent) => dirent.name);
+      .filter((dirent: Dirent) => dirent.isDirectory())
+      .map((dirent: Dirent) => dirent.name);
 
     expect(dirs).toContain("architecture");
     expect(dirs).toContain("data");
@@ -25,7 +42,7 @@ describe("Documentation Content", () => {
     const docsPath = join(process.cwd(), "src/content/docs");
     const files = getAllMarkdownFiles(docsPath);
 
-    files.forEach((file) => {
+    files.forEach((file: string) => {
       const content = readFileSync(file, "utf-8");
       expect(content.trim().length).toBeGreaterThan(0);
     });
@@ -35,7 +52,7 @@ describe("Documentation Content", () => {
     const docsPath = join(process.cwd(), "src/content/docs");
     const files = getAllMarkdownFiles(docsPath);
 
-    files.forEach((file) => {
+    files.forEach((file: string) => {
       const content = readFileSync(file, "utf-8");
       // Check if file starts with frontmatter (---)
       if (content.trim().startsWith("---")) {
@@ -67,20 +84,3 @@ describe("Astro Configuration", () => {
     expect(config).toContain("Services");
   });
 });
-
-// Helper function to recursively get all markdown files
-function getAllMarkdownFiles(dir) {
-  let files = [];
-  const items = readdirSync(dir, { withFileTypes: true });
-
-  for (const item of items) {
-    const fullPath = join(dir, item.name);
-    if (item.isDirectory()) {
-      files = files.concat(getAllMarkdownFiles(fullPath));
-    } else if (item.name.endsWith(".md") || item.name.endsWith(".mdx")) {
-      files.push(fullPath);
-    }
-  }
-
-  return files;
-}

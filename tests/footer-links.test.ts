@@ -3,7 +3,7 @@ import { readFileSync } from "fs";
 import { join } from "path";
 
 describe("Footer Component", () => {
-  const footerContent = readFileSync(
+  const footerContent: string = readFileSync(
     join(process.cwd(), "src/components/Footer.astro"),
     "utf-8"
   );
@@ -15,7 +15,8 @@ describe("Footer Component", () => {
   });
 
   it('should have proper target="_blank" for external links', () => {
-    const targetBlankMatches = footerContent.match(/target=\{"_blank"\}/g);
+    const targetBlankMatches: RegExpMatchArray | null =
+      footerContent.match(/target=\{"_blank"\}/g);
     expect(targetBlankMatches).toBeTruthy();
   });
 
