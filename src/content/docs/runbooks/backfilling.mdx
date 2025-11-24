@@ -60,17 +60,17 @@ If needed, the entire dbt project can be refreshed with:
 
 ### ML Pipeline
 
-The ML Pipeline pulls data from `ml_models.ml_tonights_games` to generate predictions for upcoming games that night. If there was an issue upstream in the NBA ELT Pipeline that affects this table being refreshed properly, then the ML Pipeline will likely fail and not generate predictions for that day.
+The ML Pipeline pulls data from `silver.ml_tonights_games` to generate predictions for upcoming games that night. If there was an issue upstream in the NBA ELT Pipeline that affects this table being refreshed properly, then the ML Pipeline will likely fail and not generate predictions for that day.
 
 After addressing the upstream issue and refreshing this table via dbt, you can run the ML Pipeline with the following command:
 
-- `python -m src.app` runs the Pipeline as a module and will pull the data, generate the predictions, and upload it back to Postgres in the `ml_models.ml_tonights_games` table
+- `python -m src.app` runs the Pipeline as a module and will pulls the data, generates the predictions, and uploads them back to Postgres to the `gold.ml_game_predictions` table
 
 Afterwards, you can verify the data by running the following query:
 
 ```sql
 select *
-from ml_models.ml_tonights_games
+from gold.ml_game_predictions
 order by game_date desc
 limit 100;
 ```

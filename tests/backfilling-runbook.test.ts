@@ -96,13 +96,13 @@ describe("Backfilling Runbook", () => {
     });
 
     it("should reference ml_tonights_games table", () => {
-      expect(content).toContain("ml_models.ml_tonights_games");
+      expect(content).toContain("silver.ml_tonights_games");
     });
 
     it("should have verification SQL query", () => {
       expect(content).toContain("```sql");
       expect(content).toContain("select *");
-      expect(content).toContain("from ml_models.ml_tonights_games");
+      expect(content).toContain("from gold.ml_game_predictions");
       expect(content).toContain("order by game_date desc");
     });
   });

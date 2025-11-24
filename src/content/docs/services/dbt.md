@@ -62,38 +62,8 @@ _Note: A `scratch/` folder exists for ad hoc analytics and experimental work._
 
 ```mermaid
 graph LR
-    A[Ingestion Script] --> B[Bronze Layer]
-
-    subgraph Postgres[PostgreSQL Database]
-        B
-
-        subgraph dbt[dbt Transformations]
-            C[Silver Layer]
-            D[Gold Layer]
-        end
-
-        B --> C
-        C --> D
-    end
-
-    C -.-> E[ML Pipeline]
-    E -.-> D
-
-    subgraph Downstream[Downstream Services]
-        F[REST API]
-        G[Frontend Dashboard]
-    end
-
-    D --> F
-    D --> G
-
-    style Postgres fill:#6b7280,stroke:#374151,stroke-width:2px,color:#fff
-    style dbt fill:#d1d5db,stroke:#6b7280,stroke-width:1.5px,color:#333
-    style B fill:#cd7f32,stroke:#8b5a2b,stroke-width:1.5px,color:#fff
-    style C fill:#c0c0c0,stroke:#808080,stroke-width:1.5px,color:#333
-    style D fill:#ffd700,stroke:#b8860b,stroke-width:1.5px,color:#333
-    style E fill:#9b59b6,stroke:#6c3483,stroke-width:1.5px,color:#fff
-    style Downstream fill:#9ca3af,stroke:#4b5563,stroke-width:2px,color:#fff
+    A[Ingestion Script] --> B[dbt]
+    B --> C[ML Pipeline]
 ```
 
 ## How It Works
@@ -104,10 +74,10 @@ In this project dbt enables dozens of different tables to be built by transformi
 
 - **Separation of Concerns**: Each layer has a specific purpose, making the pipeline easier to understand and maintain
 - **Data Quality Gates**: Testing at the Silver layer prevents bad data from reaching Gold marts and downstream consumers
-- **Flexibility**: Intermediate tables and ML features can be built independently while sharing standardized fact and dimension tables
+- **Flexibility**: Intermediate tables and ML features can be built independently using standardized fact and dimension tables
 - **Performance**: Gold marts are pre-aggregated and optimized for fast query performance in downstream applications
 
-All of the data processing is done in dbt so that downstream applications just have to do a `select * from table` to grab what they need and display the data to end users. This significantly improves the user experience and makes for a snappy, responsive feel across the REST API and Frontend Dashboard.
+All of the data processing is done in dbt so that downstream applications just have to do a `select * from table` to grab what they need and serve the data to end users. This significantly improves the user experience and makes for a snappy, responsive feel across the REST API and Frontend Dashboard.
 
 ## Libraries
 

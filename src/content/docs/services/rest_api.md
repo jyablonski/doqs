@@ -4,7 +4,7 @@ description: A reference page in my new Starlight docs site.
 lastUpdated: 2025-11-24
 ---
 
-The REST API is a Python Service used to publicly serve the enriched & transformed data over various endpoints. It also functions as a minimal web application that hosts Admin pages for managing various different features of the project.
+The REST API is a Python Service used to publicly serve the enriched & transformed data over various endpoints.
 
 ---
 
@@ -57,7 +57,7 @@ A restricted interface for users with Admin role to manage project-wide settings
 
 ## Auth
 
-The REST API uses JWT (JSON Web Token) for authentication and authorization.
+The REST API uses JWT (JSON Web Token) for authentication and authorization for the Web App & Admin Dashboard components.
 
 - The `/token` endpoint is used when users attempt to log in.
 - After validating the user's credentials, the API returns a JWT that is used for subsequent requests.
@@ -104,11 +104,13 @@ In production, the REST API is hosted on an AWS Lambda function, with a Lambda F
   - Monitoring metrics with Prometheus is not possible in the same way as with traditional server setups.
   - Features like OpenID Connect-based authentication (e.g., “Sign-in with Google”) are much more difficult to implement and maintain context
 
-All request logs are stored in AWS Cloudwatch, and traces are tracked via opentelemetry and sent over to Honeycomb where they can be monitored & alerted on.
+All request logs are stored in AWS Cloudwatch, and traces are tracked via OpenTelemetry and sent over to Honeycomb where they can be monitored & alerted on.
 
 ## CI / CD
 
 For continuous integration (CI), the entire test suite is run on every commit in a pull request using Docker.
+
+- Because the primary backend Database is Postgres, this enables comprehensive & performant testing
 
 After a PR is merged, the continuous deployment (CD) pipeline performs the following steps:
 
