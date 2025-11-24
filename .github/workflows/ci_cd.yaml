@@ -1,80 +1,84 @@
 name: CI / CD Pipeline
 
 on:
-    pull_request:
-    push:
-        branches:
-            - main
+  pull_request:
+  push:
+    branches:
+      - main
 
 env:
-    IAM_ROLE: ${{ secrets.IAM_ROLE }}
-    AWS_REGION: "us-east-1"
-    BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
-    NODE_VERSION: "20"
+  IAM_ROLE: ${{ secrets.IAM_ROLE }}
+  AWS_REGION: "us-east-1"
+  BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+  NODE_VERSION: "20"
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 permissions:
-    id-token: write
-    contents: read
+  id-token: write
+  contents: read
 
 jobs:
-    ci_pipeline:
-        name: CI Pipeline
-        runs-on: ubuntu-latest
+  ci_pipeline:
+    name: CI Pipeline
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-            - name: Set up Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: ${{ env.NODE_VERSION }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
-            - name: Install dependencies
-              run: npm install
+      - name: Install dependencies
+        run: npm install
 
-            - name: Build project
-              run: npm run build
+      - name: Run tests with coverage
+        run: npm run test:coverage
 
-    cd_pipeline:
-        name: CD Pipeline
-        needs: [ci_pipeline]
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        runs-on: ubuntu-latest
+      - name: Build project
+        run: npm run build
 
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
+  cd_pipeline:
+    name: CD Pipeline
+    needs: [ci_pipeline]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
 
-            - name: Set up Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: ${{ env.NODE_VERSION }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-            - name: Install dependencies
-              run: npm install
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
-            - name: Build project
-              run: npm run build
+      - name: Install dependencies
+        run: npm install
 
-            - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@v4
-              with:
-                  role-to-assume: ${{ env.IAM_ROLE }}
-                  role-session-name: github-doqs-cicd
-                  aws-region: ${{ env.AWS_REGION }}
+      - name: Build project
+        run: npm run build
 
-            - name: Upload to S3
-              run: aws s3 sync ./dist/ s3://${{ env.BUCKET_NAME }} --delete
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.IAM_ROLE }}
+          role-session-name: github-doqs-cicd
+          aws-region: ${{ env.AWS_REGION }}
 
-    notify:
-        name: Deploy Notification
-        needs: [cd_pipeline]
-        if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
-        runs-on: ubuntu-latest
-        steps:
-            - name: Slack Alert
-              uses: jyablonski/actions/alert@v1
-              with:
-                  status: ${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}
-                  webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: Upload to S3
+        run: aws s3 sync ./dist/ s3://${{ env.BUCKET_NAME }} --delete
+
+  notify:
+    name: Deploy Notification
+    needs: [cd_pipeline]
+    if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slack Alert
+        uses: jyablonski/actions/alert@v1
+        with:
+          status: ${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
