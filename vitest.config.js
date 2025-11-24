@@ -6,7 +6,7 @@ export default defineConfig({
     environment: "happy-dom",
     coverage: {
       provider: "v8",
-      reporter: ["text", "json", "html", "lcov"], // Add 'lcov' here
+      reporter: ["text", "json", "html", "lcov"],
       include: ["src/**/*.{js,ts,mjs}"],
       exclude: [
         "src/content/**",
