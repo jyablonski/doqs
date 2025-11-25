@@ -1,12 +1,12 @@
 ---
 title: Common Modules
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-06-14
+lastUpdated: 2025-11-24
 ---
 
-import { FileTree } from '@astrojs/starlight/components';
+import { FileTree } from "@astrojs/starlight/components";
 
-jyablonski Common Modules is an internal Python library hosted on PyPI that is used throughout various services & applications in the project
+jyablonski Common Modules is an internal Python library hosted on [PyPI](https://pypi.org/project/jyablonski_common_modules/) that is used throughout various services & applications in the project
 
 ---
 
@@ -16,19 +16,17 @@ The library provides a collection of helper and utility functions that can be re
 
 It can be installed as a Python package in any environment using the following command:
 
-``` sh
+```sh
 pip install jyablonski-common-modules
 ```
 
 The library currently includes functions for SQL-related connections and upsert operations, general Python logging, and AWS utilities. I plan to expand its functionality and scope as needed in the future.
-
 
 ## Code Layout
 
 The project is broken down like below:
 
 <FileTree>
-
 
 - jyablonski_common_modules
   - aws/
@@ -44,14 +42,14 @@ The project is broken down like below:
 
 This source code structure allows for clean and concise import statements, such as:
 
-``` py
+```py
 from jyablonski_common_modules.logging import create_logger
 from jyablonski_common_modules.sql import create_sql_engine, write_to_sql_upsert
 ```
 
 To enable importing any function from subdirectories like `sql` or `logging`, the `__init__.py` for each subdirectory is configured like so:
 
-``` py
+```py
 from .connection import create_sql_engine
 from .writers import write_to_sql_upsert
 

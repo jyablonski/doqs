@@ -1,10 +1,10 @@
 ---
 title: REST API
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-10-13
+lastUpdated: 2025-11-24
 ---
 
-The REST API is a Python Service used to publicly serve the enriched & transformed data over various endpoints. It also functions as a minimal web application that hosts Admin pages for managing various different features of the project.
+The REST API is a Python Service used to publicly serve the enriched & transformed data over various endpoints.
 
 ---
 
@@ -37,27 +37,27 @@ graph LR
 
 ## How It Works
 
+The REST API serves NBA ELT pipeline data through multiple endpoints and includes three main components:
+
 ### 1. REST API
 
-- Serves NBA ELT pipeline data via multiple RESTful endpoints.
-- Exposes data related to teams, players, games, betting odds, and user predictions.
-- Endpoints are available to anyone, even without authentication.
+Serves NBA data through RESTful endpoints covering teams, players, games, betting odds, and user predictions. All endpoints are publicly accessible without authentication.
 
 ### 2. Web Application
 
-- Provides a simple frontend where users can:
-  - Create an Account and log in via username and password.
-  - Place simulated (fake) bets on upcoming NBA games based on moneyline odds.
-  - View historical performance and track betting accuracy over time, updated after game results are processed.
+A frontend interface that allows users to:
+
+- Create accounts and log in with username and password
+- Place simulated bets on upcoming NBA games using scraped moneyline odds
+- View historical betting performance and track accuracy, automatically updated after game results are processed
 
 ### 3. Admin Dashboard
 
-- An extension of the Web Application frontend to provide a separate admin UI used to manage project-wide settings and features.
-- Restricted to users with the Admin role.
+A restricted interface for users with Admin role to manage project-wide settings and features.
 
 ## Auth
 
-The REST API uses JWT (JSON Web Token) for authentication and authorization.
+The REST API uses JWT (JSON Web Token) for authentication and authorization for the Web App & Admin Dashboard components.
 
 - The `/token` endpoint is used when users attempt to log in.
 - After validating the user's credentials, the API returns a JWT that is used for subsequent requests.
@@ -104,11 +104,13 @@ In production, the REST API is hosted on an AWS Lambda function, with a Lambda F
   - Monitoring metrics with Prometheus is not possible in the same way as with traditional server setups.
   - Features like OpenID Connect-based authentication (e.g., “Sign-in with Google”) are much more difficult to implement and maintain context
 
-All request logs are stored in AWS Cloudwatch, and traces are tracked via opentelemetry and sent over to Honeycomb where they can be monitored & alerted on.
+All request logs are stored in AWS Cloudwatch, and traces are tracked via OpenTelemetry and sent over to Honeycomb where they can be monitored & alerted on.
 
 ## CI / CD
 
 For continuous integration (CI), the entire test suite is run on every commit in a pull request using Docker.
+
+- Because the primary backend Database is Postgres, this enables comprehensive & performant testing
 
 After a PR is merged, the continuous deployment (CD) pipeline performs the following steps:
 

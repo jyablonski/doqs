@@ -1,10 +1,10 @@
 ---
 title: Data Ingestion
 description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-06-14
+lastUpdated: 2025-11-24
 ---
 
-import { Steps } from '@astrojs/starlight/components';
+import { Steps } from "@astrojs/starlight/components";
 
 This page walks through how data ingestion is handled for the NBA ELT Project
 
@@ -23,7 +23,7 @@ By maintaining a common pattern, extending the system to handle additional sourc
 1. Pull data from a source system
 2. Turn data into a Pandas DataFrame for subsequent steps
 3. Perform minimal cleaning, data enrichment, and column name standardization
-4. Merge data from Pandas DataFrame into Postgres `nba_source` schema
+4. Merge data from Pandas DataFrame into Postgres `bronze` schema
 5. Write data to S3 as Parquet files for backup purposes
 
 </Steps>
@@ -32,8 +32,8 @@ By maintaining a common pattern, extending the system to handle additional sourc
 
 1. The DataFrame is first inserted into a temporary table in Postgres.
 2. Records from the temp table are upserted into the target source table:
-    - Inserts: New records are added.
-    - Updates: Existing records are updated based on matching keys.
+   - Inserts: New records are added.
+   - Updates: Existing records are updated based on matching keys.
 3. A `modified_at` timestamp is automatically updated whenever a record is inserted or changed.
 4. dbt leverages the `modified_at` timestamp to drive incremental builds for downstream Fact and Dimension tables, which are the only tables that pull from the Source data
 
@@ -46,13 +46,16 @@ The merge logic predates Postgres' native MERGE functionality introduced in vers
 ### Table Naming Conventions
 
 Source tables are named using the following convention:
+
 - `nba_source.<source_name>_<table_name>`
 - Example: `nba_source.bbref_player_boxscores` -> Player Boxscore records from Basketball Reference
 
 Where possible, further naming standardization should be applied to help denote the type of data in the table:
+
 - `nba_source.bbref_player_stats_snapshot` -> Player Statistics Snapshot
 - `nba_source.bbref_league_transactions` -> League Transactions such as trades, free agent signings etc
 
 For tables created manually or internally, the following naming convention is used:
+
 - `nba_source.internal_<table_name>`
 - Example: `nba_source.internal_player_attributes` -> Contains special attributes from various sources like player headshot PNGs, years of experience etc

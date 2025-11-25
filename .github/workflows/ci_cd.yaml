@@ -1,0 +1,95 @@
+name: CI / CD Pipeline
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+env:
+  IAM_ROLE: ${{ secrets.IAM_ROLE }}
+  AWS_REGION: "us-east-1"
+  BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+  NODE_VERSION: "20"
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  ci_pipeline:
+    name: CI Pipeline
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests with coverage
+        run: npm run test:coverage
+
+      - name: Build project
+        run: npm run build
+
+      - name: Upload to Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          files: ./coverage/lcov.info
+
+  cd_pipeline:
+    name: CD Pipeline
+    needs: [ci_pipeline]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm install
+
+      # Note: this step installs and builds again here instead of reusing CI artifacts.
+      # Could cache build artifacts from CI job to save time, but leaving as-is for now
+      - name: Build project
+        run: npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.IAM_ROLE }}
+          role-session-name: github-doqs-cicd
+          aws-region: ${{ env.AWS_REGION }}
+
+      # Sync build artifacts to S3
+      # `--delete` flag removes old files from S3 that are no longer in ./dist/
+      # This keeps the S3 bucket in sync with the local build output
+      - name: Upload to S3
+        run: aws s3 sync ./dist/ s3://${{ env.BUCKET_NAME }} --delete
+
+  notify:
+    name: Deploy Notification
+    needs: [cd_pipeline]
+    if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slack Alert
+        uses: jyablonski/actions/alert@v1
+        with:
+          status: ${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}

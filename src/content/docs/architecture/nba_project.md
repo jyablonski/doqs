@@ -1,7 +1,7 @@
 ---
 title: NBA Project
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-08-01
+lastUpdated: 2025-11-24
 tags:
   - AWS
   - Cloud
@@ -11,7 +11,6 @@ sidebar:
   # Set a custom order for the link (lower numbers are displayed higher up)
   order: 2
 ---
-
 
 This project is an end-to-end data platform delivering insights and predictions for the NBA season via a custom-built interactive dashboard. The system is fully containerized and deployed on AWS using best practices, including CI/CD pipelines, Terraform-managed infrastructure, and automated testing.
 
@@ -45,55 +44,72 @@ Operational costs are minimal (around $1/month), primarily by leveraging the AWS
 ### 1. Data Ingestion
 
 - Python Script using Pandas, SQLAlchemy, and various other packages to gather data from a series of sources
-- Data is ingested into a remote Postgres Database and backed up to S3
+- Data is ingested into the Bronze Layer of a cloud-hosted Postgres Database, and also backed up to S3 for redundancy
 - Utilizes a feature flag table to determine what data to pull on each run
 - Ran via ECS Fargate as part of the daily pipeline orchestrated with AWS Step Functions
 
-> *Note: The NBA blocks AWS IPs from accessing their API, necessitating custom scraping solutions.*
+> _Note: The NBA blocks AWS IPs from accessing their API, necessitating custom scraping solutions._
 
 ---
 
 ### 2. dbt Transformations
 
-- Models source data into Fact and Dimension tables, followed by Prep and Mart layers
-- Utilizes [dbt-expectations](https://github.com/metaplane/dbt-expectations) for data quality tests
-- Prep layer isolates and validates transformed models early, preventing data quality issues from propagating to the Mart layer and downstream services
-- Mart layer feeds both the REST API & Frontend Dashboard
+- Transforms raw Bronze data through a medallion architecture (Bronze -> Silver -> Gold)
+- **Silver Layer**: Fact and dimension tables standardize column names, enforce data types, and perform light cleaning; intermediate tables build custom models for downstream services and enable early data quality validation
+- **Gold Layer**: Analytics-ready marts optimized for consumption by the REST API and Frontend Dashboard
+- Utilizes [dbt-expectations](https://github.com/metaplane/dbt-expectations) for comprehensive data quality testing
+- Intermediate tables in the Silver layer isolate and validate transformed models early, preventing data quality issues from propagating to the Gold layer and downstream services
 - Ran via ECS Fargate as part of the daily pipeline orchestrated with AWS Step Functions
 
 ```mermaid
-graph LR;
-    A[Source Data] --> B[Fact Tables]
+graph LR
+    A[Bronze Layer<br/>Raw Sources] --> B[Fact Tables]
     A --> C[Dimension Tables]
-    B --> D[Prep Layer]
+
+    subgraph Silver[Silver Layer]
+        B
+        C
+        D[Intermediate Tables]
+        E[ML Features]
+    end
+
+    B --> D
     C --> D
-    D --> E[Mart Layer]
+    B --> E
+    C --> E
+
+    D --> F[Gold Layer<br/>Analytics Marts]
+    E --> F
+
+    style A fill:#cd7f32,stroke:#8b5a2b,stroke-width:1.5px,color:#fff
+    style Silver fill:#d1d5db,stroke:#6b7280,stroke-width:2px,color:#333
+    style F fill:#ffd700,stroke:#b8860b,stroke-width:1.5px,color:#333
 ```
 
 ---
 
 ### 3. ML Pipeline
 
-- Python Script which pulls upcoming games from Postgres and generates win probability predictions using a Logistic Regression model built with scikit-learn
-- Factors in team performance, rest days, and injury reports.
-- Predictions are stored back to Postgres and served by REST API & Frontend Dashboard
-- Ran via ECS Fargate as part of the daily pipeline orchestrated with AWS Step Functions.
+- Python Script which pulls purpose-built ML feature datasets from the Silver Layer and generates win probability predictions for upcoming games using a Logistic Regression model
+- Model features include recent team performance, rest days, and active injuries for both teams
+- Predictions are written back to the Gold Layer in Postgres and served by the REST API & Frontend Dashboard
+- Ran via ECS Fargate as part of the daily pipeline orchestrated with AWS Step Functions
 
 ---
 
 ### 4. REST API
 
-- Python Application which pulls transformed & enriched data from Postgres and serves it over public HTTP endpoints
+- Python Application which pulls transformed & enriched data from the Gold Layer in Postgres and serves it over public HTTP endpoints
 - Includes a lightweight web app for users sign in and make betting predictions for upcoming games
 - Also includes Admin pages for managing various aspects of the project, like feature flags
 - Deployed as a serverless application (AWS Lambda) for $0 / month.
 - Utilizes CloudFront & Route 53 for distribution and routing to https://api.jyablonski.dev.
-  
+
 <img src="https://github.com/user-attachments/assets/eed80b93-defc-427a-9dd0-078ddde836ae" alt="API Admin Panel" width="1200" height="600"/>
 
 #### Query Example
 
-``` sh
+```sh
 curl -H "Accept: application/json" https://api.jyablonski.dev/v1/league/game_types
 
 ```
@@ -104,7 +120,7 @@ curl -H "Accept: application/json" https://api.jyablonski.dev/v1/league/game_typ
 
 - Python Application built with Dash which pulls data from Postgres to serve various tables, metrics, and graphs
 - Fully interactive with filtering and drill-down capabilities.
-- Hosted on a free-tier VM routed via Route 53 to https://nbadashboard.jyablonski.dev.
+- Hosted on free-tier resources and routed via Route 53 to https://nbadashboard.jyablonski.dev.
 
 <img src="https://github.com/user-attachments/assets/fe68e2a7-ea82-443b-bd9b-c0c6f155ad57" alt="Dashboard Screenshot" width="1400" height="600"/>
 
@@ -149,9 +165,9 @@ Ensures DRY principles and code consistency across services.
 ### Database Management
 
 - Postgres serves as the core database
-- All schemas, users, roles, and permissions managed via Terraform
+- All schemas, users, roles, and permissions managed via [Terraform](https://github.com/jyablonski/aws_terraform/blob/master/postgresql.tf)
 - Least privilege principles are implemented with strict role-based access control
-  
+
 ```hcl
 module "reporting_schema" {
   source = "./modules/postgresql/schema"
