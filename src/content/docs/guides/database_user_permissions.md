@@ -1,13 +1,12 @@
 ---
 title: Database User Permissions
 description: A guide in my new Starlight docs site.
-lastUpdated: 2025-08-01
+lastUpdated: 2025-12-21
 ---
 
 This page outlines how database user permissions are structured and managed in Postgres using Terraform.
 
 ---
-
 
 ## Setup
 
@@ -20,6 +19,7 @@ Custom Terraform modules are maintained for managing Postgres resources:
 - [Postgres Modules Repository](https://github.com/jyablonski/aws_terraform/tree/master/modules/postgresql)
 
 These modules handle the creation of:
+
 - Databases
 - Schemas
 - Roles
@@ -37,9 +37,10 @@ Permissions are categorized and managed at the schema-wide level into three dist
 3. Admin - For roles requiring elevated privileges for things like dropping tables
 
 ### Examples
-- dbt: Requires read-only access to source schemas, but admin access to Marts for operations like dropping tables etc
+
+- dbt: Requires read-only access to source schemas, but admin access to Silver + Gold layers to create, modify, and drop models as needed.
 - Ingestion Script: Requires read + write access to source schemas for data loading tasks.
-- REST API: Requires read + write access to Marts Schema for fetching data and performing various table updates 
+- REST API: Requires read + write access to Gold layer for fetching data and performing various table updates
 
 ---
 
@@ -52,14 +53,14 @@ Below is an example of how roles and schema permissions are defined using the mo
 module "dbt_role_prod" {
   source        = "./modules/postgresql/role"
   role_name     = "dbt_role_prod"
-  role_password = "${var.es_master_pw}dbt"
+  role_password = "${var.dbt_role_password}"
 }
 
-# Create marts schema with role-based access
-module "marts_schema" {
+# Create gold layer schema with role-based access
+module "gold_schema" {
   source = "./modules/postgresql/schema"
 
-  schema_name   = "marts"
+  schema_name   = "gold"
   database_name = var.jacobs_rds_db
   schema_owner  = var.postgres_username
 
