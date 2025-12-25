@@ -6,7 +6,7 @@ Static documentation site built with [Astro](https://astro.build/) and [Starligh
 
 ## Live Site
 
-📖 **[https://doqs.jyablonski.dev](https://doqs.jyablonski.dev)**
+**[https://doqs.jyablonski.dev](https://doqs.jyablonski.dev)**
 
 ## Quick Start
 
