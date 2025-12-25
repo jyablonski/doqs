@@ -2,6 +2,8 @@
 title: REST API
 description: A reference page in my new Starlight docs site.
 lastUpdated: 2025-11-24
+author: jyablonski
+tags: ["service", "api", "python", "backend"]
 ---
 
 The REST API is a Python Service used to publicly serve the enriched & transformed data over various endpoints.

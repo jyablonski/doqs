@@ -2,6 +2,8 @@
 title: Twitter
 description: A guide in my new Starlight docs site.
 lastUpdated: 2025-11-24
+author: jyablonski
+tags: ["data-source", "social-media", "deprecated"]
 ---
 
 :::caution[Not In Use]

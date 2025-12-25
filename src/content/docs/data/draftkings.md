@@ -2,6 +2,8 @@
 title: DraftKings
 description: A guide in my new Starlight docs site.
 lastUpdated: 2025-11-24
+author: jyablonski
+tags: ["data-source", "nba", "betting", "web-scraping"]
 ---
 
 This page walks through DraftKings as a Data Source for the NBA Project

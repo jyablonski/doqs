@@ -60,10 +60,11 @@ export default defineConfig({
       ],
       // enable this if you want to set a footer up across all pages
       components: {
+        // PageFrame: "./src/components/PageFrame.astro",
         // Footer: './src/components/Footer.astro',
         // Header: './src/components/Header.astro'
         // Banner: './src/components/Banner.astro',
-        // PageTitle: './src/components/Title.astro',
+        PageTitle: "./src/components/PageTitle.astro",
       },
     }),
   ],

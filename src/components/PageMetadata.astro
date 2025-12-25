@@ -1,0 +1,145 @@
+---
+// Type for custom frontmatter fields
+interface EntryData {
+  author?: string;
+  lastUpdated?: Date | boolean;
+  tags?: string[];
+}
+
+// Safely access entry from props or locals with comprehensive error handling
+let entry: { data?: EntryData } | undefined;
+let data: EntryData = {};
+let author: string | undefined;
+let lastUpdated: Date | boolean | undefined;
+let tags: string[] = [];
+let hasMetadata = false;
+
+try {
+  entry =
+    (Astro.props as any)?.entry || (Astro.locals as any)?.starlightRoute?.entry;
+
+  if (entry && entry.data) {
+    data = entry.data;
+    author = data.author;
+    lastUpdated = data.lastUpdated;
+    tags = Array.isArray(data.tags) ? data.tags : [];
+
+    // Only show the table if at least one field exists
+    hasMetadata = !!(author || lastUpdated || tags.length > 0);
+  }
+} catch (e) {
+  // Silently fail - don't render anything if there's an error
+  hasMetadata = false;
+}
+
+// Early return if no metadata to display
+if (!hasMetadata) {
+  return null;
+}
+---
+
+{
+  hasMetadata && (
+    <div class="page-metadata">
+      <table class="metadata-table">
+        <tbody>
+          {author && (
+            <tr>
+              <th>Author</th>
+              <td>{author}</td>
+            </tr>
+          )}
+          {lastUpdated && (
+            <tr>
+              <th>Last Updated</th>
+              <td>
+                {typeof lastUpdated === "string"
+                  ? new Date(lastUpdated).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })
+                  : lastUpdated instanceof Date
+                    ? lastUpdated.toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })
+                    : String(lastUpdated)}
+              </td>
+            </tr>
+          )}
+          {tags.length > 0 && (
+            <tr>
+              <th>Tags</th>
+              <td>
+                <div class="tags-container">
+                  {tags.map((tag: string) => (
+                    <span class="tag">{tag}</span>
+                  ))}
+                </div>
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+<style>
+  .page-metadata {
+    margin-bottom: 2rem;
+  }
+
+  .metadata-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--sl-color-gray-5);
+    border-radius: var(--sl-border-radius-medium);
+    overflow: hidden;
+  }
+
+  .metadata-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: var(--sl-font-weight-semibold);
+    color: var(--sl-color-text);
+    background: var(--sl-color-gray-4);
+    border-right: 1px solid var(--sl-color-gray-3);
+    width: 140px;
+    vertical-align: top;
+  }
+
+  .metadata-table td {
+    padding: 0.75rem 1rem;
+    color: var(--sl-color-text);
+  }
+
+  .tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: var(--sl-color-accent);
+    color: var(--sl-color-white);
+    border-radius: var(--sl-border-radius-small);
+    font-size: var(--sl-text-sm);
+    font-weight: var(--sl-font-weight-medium);
+  }
+
+  @media (max-width: 768px) {
+    .metadata-table th {
+      width: 100px;
+      font-size: var(--sl-text-sm);
+    }
+
+    .metadata-table td {
+      font-size: var(--sl-text-sm);
+    }
+  }
+</style>

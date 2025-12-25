@@ -2,6 +2,8 @@
 title: Dash Frontend
 description: A reference page in my new Starlight docs site.
 lastUpdated: 2025-11-24
+author: jyablonski
+tags: ["service", "frontend", "python", "visualization"]
 ---
 
 The Dash frontend service retrieves transformed data from the Postgres database to present charts, graphs, and reports, enabling users to generate insights.

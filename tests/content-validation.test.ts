@@ -57,4 +57,57 @@ describe("Content Validation", () => {
       }
     });
   });
+
+  it("should have required metadata fields (author, lastUpdated, tags) in all docs", () => {
+    // Files exempt from metadata requirements
+    const exemptFiles = [
+      "404.md", // Error page
+      "example.mdx", // Draft/template file
+    ];
+
+    const files = getAllMdFiles(docsDir);
+
+    files.forEach((file) => {
+      const fileName = file.split("/").pop() || "";
+
+      // Skip exempt files
+      if (exemptFiles.includes(fileName)) {
+        return;
+      }
+
+      const content = readFileSync(file, "utf-8");
+      const { data } = matter(content);
+      const relativePath = file.replace(docsDir + "/", "");
+
+      // Check for author field
+      expect(
+        data.author,
+        `Missing 'author' field in ${relativePath}`
+      ).toBeDefined();
+      expect(
+        typeof data.author,
+        `'author' should be a string in ${relativePath}`
+      ).toBe("string");
+
+      // Check for lastUpdated field
+      expect(
+        data.lastUpdated,
+        `Missing 'lastUpdated' field in ${relativePath}`
+      ).toBeDefined();
+
+      // Check for tags field
+      expect(
+        data.tags,
+        `Missing 'tags' field in ${relativePath}`
+      ).toBeDefined();
+      expect(
+        Array.isArray(data.tags),
+        `'tags' should be an array in ${relativePath}`
+      ).toBe(true);
+      expect(
+        data.tags.length,
+        `'tags' should not be empty in ${relativePath}`
+      ).toBeGreaterThan(0);
+    });
+  });
 });

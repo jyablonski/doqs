@@ -13,13 +13,13 @@ Static documentation site built with [Astro](https://astro.build/) and [Starligh
 
 ```bash
 # Install dependencies
-npm install
+make setup
 
 # Start development server
 make up
 
-# or
-npm run dev
+# Run tests
+make test
 ```
 
 The site will be available at `http://localhost:4321`.

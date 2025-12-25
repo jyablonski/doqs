@@ -2,6 +2,8 @@
 title: Doqs
 description: A reference page in my new Starlight docs site.
 lastUpdated: 2025-11-24
+author: jyablonski
+tags: ["service", "documentation", "frontend"]
 ---
 
 Doqs is an internal site written in Starlight to store documentation on the NBA ELT Project

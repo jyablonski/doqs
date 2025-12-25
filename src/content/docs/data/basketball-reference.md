@@ -2,6 +2,8 @@
 title: basketball-reference
 description: A guide in my new Starlight docs site.
 lastUpdated: 2025-11-24
+author: jyablonski
+tags: ["data-source", "nba", "web-scraping"]
 ---
 
 This page walks through basketball-reference as a Data Source for the NBA Project

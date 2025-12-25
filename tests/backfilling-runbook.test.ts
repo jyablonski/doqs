@@ -16,15 +16,16 @@ describe("Backfilling Runbook", () => {
       expect(content).toContain("lastUpdated:");
     });
 
-    it("should have authors field", () => {
-      expect(content).toContain("authors:");
+    it("should have author field", () => {
+      expect(content).toContain("author:");
       expect(content).toContain("jyablonski");
     });
 
     it("should have tags", () => {
       expect(content).toContain("tags:");
-      expect(content).toContain("test1");
-      expect(content).toContain("test2");
+      expect(content).toContain("runbook");
+      expect(content).toContain("elt");
+      expect(content).toContain("operations");
     });
   });
 
