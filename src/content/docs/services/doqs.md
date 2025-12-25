@@ -44,6 +44,20 @@ To enable the use of [Mermaid Diagrams](https://mermaid.js.org/) throughout the 
 
 - To turn those `<div>` elements into diagrams, the Mermaid JavaScript library is loaded on every page via a `<script>` tag attached to the `<head>` of every page. This external script detects these elements and renders them as diagrams in the browser.
 
+### Tags
+
+All documentation pages support frontmatter metadata including `author`, `lastUpdated`, and `tags`. Tags are used to categorize content and power the "Related Pages" feature at the bottom of each page.
+
+**Tag Taxonomy:**
+
+| Category         | Tags                                                                                              |
+| ---------------- | ------------------------------------------------------------------------------------------------- |
+| Document Type    | `guide`, `runbook`, `reference`, `architecture`                                                   |
+| Technical Domain | `data-source`, `service`, `elt`, `ml`, `database`, `api`, `frontend`, `backend`, `infrastructure` |
+| Technologies     | `python`, `aws`, `terraform`, `github-actions`, `web-scraping`, `ci-cd`                           |
+
+Pages with shared tags are automatically linked together, helping users discover related content.
+
 ### .md vs .mdx
 
 Starlight supports both `.md` and `.mdx` files for writing documentation pages. The main difference is that `.mdx` files allow you to embed React components directly within Markdown content, while `.md` files are strictly Markdown.

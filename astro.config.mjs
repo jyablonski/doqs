@@ -65,6 +65,8 @@ export default defineConfig({
         // Header: './src/components/Header.astro'
         // Banner: './src/components/Banner.astro',
         PageTitle: "./src/components/PageTitle.astro",
+        // Override Pagination (disabled) to show related docs instead
+        Pagination: "./src/components/RelatedDocs.astro",
       },
     }),
   ],
