@@ -2,6 +2,8 @@
 title: Doqs
 description: A reference page in my new Starlight docs site.
 lastUpdated: 2025-11-24
+author: jyablonski
+tags: ["service", "documentation", "frontend"]
 ---
 
 Doqs is an internal site written in Starlight to store documentation on the NBA ELT Project
@@ -41,6 +43,20 @@ Starlight enables a very fast initial setup process and offers an elegant soluti
 To enable the use of [Mermaid Diagrams](https://mermaid.js.org/) throughout the site, a custom remark plugin in the codebase transforms mermaid-labeled code blocks into HTML `<div>` elements.
 
 - To turn those `<div>` elements into diagrams, the Mermaid JavaScript library is loaded on every page via a `<script>` tag attached to the `<head>` of every page. This external script detects these elements and renders them as diagrams in the browser.
+
+### Tags
+
+All documentation pages support frontmatter metadata including `author`, `lastUpdated`, and `tags`. Tags are used to categorize content and power the "Related Pages" feature at the bottom of each page.
+
+**Tag Taxonomy:**
+
+| Category         | Tags                                                                                              |
+| ---------------- | ------------------------------------------------------------------------------------------------- |
+| Document Type    | `guide`, `runbook`, `reference`, `architecture`                                                   |
+| Technical Domain | `data-source`, `service`, `elt`, `ml`, `database`, `api`, `frontend`, `backend`, `infrastructure` |
+| Technologies     | `python`, `aws`, `terraform`, `github-actions`, `web-scraping`, `ci-cd`                           |
+
+Pages with shared tags are automatically linked together, helping users discover related content.
 
 ### .md vs .mdx
 

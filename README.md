@@ -1,24 +1,25 @@
 # Doqs
 
 ![Coverage Status](https://coveralls.io/repos/github/jyablonski/doqs/badge.svg?branch=main)
+![CI/CD](https://github.com/jyablonski/doqs/actions/workflows/ci_cd.yaml/badge.svg)
 
 Static documentation site built with [Astro](https://astro.build/) and [Starlight](https://starlight.astro.build/) for the NBA ELT Project.
 
 ## Live Site
 
-📖 **[https://doqs.jyablonski.dev](https://doqs.jyablonski.dev)**
+**[https://doqs.jyablonski.dev](https://doqs.jyablonski.dev)**
 
 ## Quick Start
 
 ```bash
 # Install dependencies
-npm install
+make setup
 
 # Start development server
 make up
 
-# or
-npm run dev
+# Run tests
+make test
 ```
 
 The site will be available at `http://localhost:4321`.

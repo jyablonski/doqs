@@ -3,7 +3,7 @@ title: dbt
 description: A reference page in my new Starlight docs site.
 lastUpdated: 2025-11-24
 author: jyablonski
-tags: ["nba", "etl", "internal"]
+tags: ["nba", "elt", "transformations"]
 ---
 
 The dbt project transforms and enriches source data in the database, creating new tables for use by downstream services and applications for analytics, reporting, and insights.

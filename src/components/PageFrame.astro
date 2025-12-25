@@ -1,0 +1,25 @@
+---
+import DefaultPageFrame from "@astrojs/starlight/components/PageFrame.astro";
+import PageMetadata from "./PageMetadata.astro";
+
+// Safely check if we have entry data
+let shouldRenderMetadata = false;
+try {
+  shouldRenderMetadata =
+    !!(Astro.props as any)?.entry ||
+    !!(Astro.locals as any)?.starlightRoute?.entry;
+} catch {
+  shouldRenderMetadata = false;
+}
+---
+
+<DefaultPageFrame {...Astro.props}>
+  {
+    shouldRenderMetadata && (
+      <Fragment>
+        <PageMetadata />
+      </Fragment>
+    )
+  }
+  <slot />
+</DefaultPageFrame>

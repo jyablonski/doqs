@@ -2,6 +2,8 @@
 title: GitHub Action Templates
 description: Guide for Understanding & implementing GitHub Action Templates
 lastUpdated: 2025-11-24
+author: jyablonski
+tags: ["guide", "ci-cd", "github-actions"]
 ---
 
 This page walks through GitHub Action Templates, how to use them, and how they are structured within this project.

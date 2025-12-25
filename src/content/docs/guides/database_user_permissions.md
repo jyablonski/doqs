@@ -2,6 +2,8 @@
 title: Database User Permissions
 description: A guide in my new Starlight docs site.
 lastUpdated: 2025-12-21
+author: jyablonski
+tags: ["guide", "database", "terraform", "security"]
 ---
 
 This page outlines how database user permissions are structured and managed in Postgres using Terraform.

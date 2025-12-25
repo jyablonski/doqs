@@ -23,8 +23,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v5
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -32,13 +32,12 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Install dependencies
-        run: npm install
+        run: make setup
 
-      - name: Run tests with coverage
-        run: npm run test:coverage
-
-      - name: Build project
-        run: npm run build
+      - name: Run Tests
+        run: make test
+        # Note: Build validation test automatically runs `npm run build` if dist/ doesn't exist
+        # No need for separate build step here - CD pipeline handles build for deployment
 
       - name: Upload to Coveralls
         uses: coverallsapp/github-action@v2
@@ -53,8 +52,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v5
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -62,12 +61,12 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Install dependencies
-        run: npm install
+        run: make setup
 
       # Note: this step installs and builds again here instead of reusing CI artifacts.
       # Could cache build artifacts from CI job to save time, but leaving as-is for now
-      - name: Build project
-        run: npm run build
+      - name: Build Project
+        run: make build
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4

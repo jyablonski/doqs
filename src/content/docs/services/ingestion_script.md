@@ -2,6 +2,8 @@
 title: Ingestion Script
 description: A reference page in my new Starlight docs site.
 lastUpdated: 2025-08-01
+author: jyablonski
+tags: ["service", "elt", "python", "web-scraping"]
 ---
 
 The Ingestion Script is responsible for all source data ingestion for the NBA ELT Project
@@ -10,7 +12,7 @@ The Ingestion Script is responsible for all source data ingestion for the NBA EL
 
 ## Architecture
 
-``` mermaid
+```mermaid
 graph LR
 
     subgraph Data_Sources[Data Sources]
@@ -37,7 +39,8 @@ graph LR
 ```
 
 ### ELT Pipeline Orchestration
-``` mermaid
+
+```mermaid
 graph LR
     A[Ingestion Script] --> B[dbt]
     B --> C[ML Pipeline]

@@ -2,10 +2,8 @@
 title: NBA Project
 description: A guide in my new Starlight docs site.
 lastUpdated: 2025-11-24
-tags:
-  - AWS
-  - Cloud
-  - Storage
+author: jyablonski
+tags: ["architecture", "aws", "infrastructure", "overview"]
 
 sidebar:
   # Set a custom order for the link (lower numbers are displayed higher up)
