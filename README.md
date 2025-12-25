@@ -1,6 +1,7 @@
 # Doqs
 
 ![Coverage Status](https://coveralls.io/repos/github/jyablonski/doqs/badge.svg?branch=main)
+![CI/CD](https://github.com/jyablonski/doqs/actions/workflows/ci_cd.yaml/badge.svg)
 
 Static documentation site built with [Astro](https://astro.build/) and [Starlight](https://starlight.astro.build/) for the NBA ELT Project.
 
