@@ -20,33 +20,9 @@ Go was chosen for its performance, simplicity, and statically compiled nature. I
 arc [command] [flags]
 ```
 
-### Global Flags
+## Installation
 
-| Flag            | Description           |
-| --------------- | --------------------- |
-| `-h, --help`    | Help for arc          |
-| `-j, --json`    | Output in JSON format |
-| `-v, --version` | Show version          |
-
-### Commands
-
-| Command     | Description                                          |
-| ----------- | ---------------------------------------------------- |
-| `aws`       | AWS-related commands                                 |
-| `clean`     | Clean package cache and remove orphaned packages     |
-| `docker`    | Clean Docker resources (images, containers, volumes) |
-| `gh`        | GitHub workflow management                           |
-| `git`       | Clean up Git repositories                            |
-| `info`      | Show system information                              |
-| `installed` | List explicitly installed packages                   |
-| `packages`  | Show package statistics                              |
-| `parts`     | Show hardware information                            |
-| `setup`     | Install required packages and tools                  |
-| `sleep`     | Suspend the system                                   |
-| `update`    | Run system updates (pacman, yay, cache cleanup)      |
-| `validate`  | Validate that all required tools are available       |
-
-Use `arc [command] --help` for detailed information about any command.
+See [Here](https://github.com/jyablonski/arc?tab=readme-ov-file#installation)
 
 ## Examples
 
