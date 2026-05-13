@@ -1,9 +1,24 @@
 repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+
   - repo: local
     hooks:
       - id: update-last-updated
         name: update-last-updated-ts
         entry: python3 .github/hooks/update_last_updated.py
-        language: python
-        files: \.(md|mdx)$  # This matches both .md and .mdx files
-        types: [file]  # Make sure it only runs on changed files
+        language: system
+        files: \.(md|mdx)$
+        types: [file]
+
+      - id: docs-quality-tests
+        name: docs-quality-tests
+        entry: npx vitest run tests/docs-quality.test.ts tests/links.test.ts
+        language: system
+        pass_filenames: false

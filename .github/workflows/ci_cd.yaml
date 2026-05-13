@@ -36,8 +36,6 @@ jobs:
 
       - name: Run Tests
         run: make test
-        # Note: Build validation test automatically runs `npm run build` if dist/ doesn't exist
-        # No need for separate build step here - CD pipeline handles build for deployment
 
       - name: Upload to Coveralls
         uses: coverallsapp/github-action@v2

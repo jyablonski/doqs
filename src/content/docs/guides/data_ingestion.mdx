@@ -1,14 +1,14 @@
 ---
 title: Data Ingestion
-description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-11-24
+description: Guide to the project data ingestion flow, merge strategy, and table naming conventions.
+lastUpdated: 2026-05-13
 author: jyablonski
 tags: ["guide", "elt", "python", "database"]
 ---
 
 import { Steps } from "@astrojs/starlight/components";
 
-This page walks through how data ingestion is handled for the NBA ELT Project
+Data ingestion follows a shared workflow for pulling source data, shaping it into DataFrames, applying light cleanup, and merging it into the Postgres bronze schema.
 
 ---
 

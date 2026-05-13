@@ -1,11 +1,7 @@
-// tests/links.test.ts
 import { describe, it, expect } from "vitest";
 import { readdirSync, readFileSync, existsSync, statSync } from "fs";
-import { join, dirname, resolve, extname } from "path";
+import { join, dirname, resolve } from "path";
 
-/**
- * Recursively get all markdown files in a directory
- */
 function getAllMarkdownFiles(dir: string): string[] {
   const files: string[] = [];
 
@@ -25,81 +21,65 @@ function getAllMarkdownFiles(dir: string): string[] {
   return files;
 }
 
-/**
- * Extract all markdown links from content
- * Matches [text](link) format
- */
-function extractMarkdownLinks(
-  content: string
-): Array<{ text: string; url: string }> {
-  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-  const links: Array<{ text: string; url: string }> = [];
-  let match;
+function stripCodeBlocks(content: string): string {
+  return content.replace(/```[\s\S]*?```/g, "");
+}
 
-  while ((match = linkRegex.exec(content)) !== null) {
-    links.push({
-      text: match[1],
-      url: match[2],
-    });
+function extractLinks(content: string): Array<{ text: string; url: string }> {
+  const links: Array<{ text: string; url: string }> = [];
+  const contentWithoutCode = stripCodeBlocks(content);
+
+  for (const match of contentWithoutCode.matchAll(/!?\[([^\]]+)\]\(([^)]+)\)/g)) {
+    if (match[0].startsWith("!")) continue;
+    links.push({ text: match[1], url: match[2].trim() });
+  }
+
+  for (const match of contentWithoutCode.matchAll(/href=["']([^"']+)["']/g)) {
+    links.push({ text: "HTML href", url: match[1].trim() });
   }
 
   return links;
 }
 
-/**
- * Check if a link is internal (not external URL)
- */
 function isInternalLink(url: string): boolean {
-  // Anchor links are considered internal
-  if (url.startsWith("#")) {
-    return true;
-  }
-  // External links start with http://, https://, mailto:, or //
-  if (/^(https?:\/\/|mailto:|\/\/)/.test(url)) {
-    return false;
-  }
-  // Relative paths are internal
+  if (url.startsWith("#")) return true;
+  if (/^(https?:\/\/|mailto:|\/\/)/.test(url)) return false;
   return !url.includes("://");
 }
 
-/**
- * Resolve internal link to file path
- */
+function splitPathAndAnchor(url: string): { path: string; anchor?: string } {
+  const [pathWithQuery, anchor] = url.split("#", 2);
+  const [path] = pathWithQuery.split("?", 1);
+  return { path, anchor };
+}
+
+function normalizeDocPath(linkUrl: string): string {
+  const { path } = splitPathAndAnchor(linkUrl);
+  return path.startsWith("/") ? path.slice(1) : path;
+}
+
 function resolveInternalLink(
   linkUrl: string,
   fromFile: string,
   docsDir: string
 ): string | null {
-  // Handle anchor links (same page)
-  if (linkUrl.startsWith("#")) {
-    return fromFile;
-  }
+  if (linkUrl.startsWith("#")) return fromFile;
 
-  // Remove leading slash if present
-  const normalizedUrl = linkUrl.startsWith("/") ? linkUrl.slice(1) : linkUrl;
+  const normalizedUrl = normalizeDocPath(linkUrl).replace(/\/$/, "");
 
-  // Try different possible paths
   const possiblePaths = [
-    // Direct path from docs root
     join(docsDir, normalizedUrl),
-    // With .md extension
-    join(docsDir, normalizedUrl + ".md"),
-    // With .mdx extension
-    join(docsDir, normalizedUrl + ".mdx"),
-    // Relative to current file's directory
+    join(docsDir, `${normalizedUrl}.md`),
+    join(docsDir, `${normalizedUrl}.mdx`),
     resolve(dirname(fromFile), normalizedUrl),
-    resolve(dirname(fromFile), normalizedUrl + ".md"),
-    resolve(dirname(fromFile), normalizedUrl + ".mdx"),
-    // Index file
+    resolve(dirname(fromFile), `${normalizedUrl}.md`),
+    resolve(dirname(fromFile), `${normalizedUrl}.mdx`),
     join(docsDir, normalizedUrl, "index.md"),
     join(docsDir, normalizedUrl, "index.mdx"),
   ];
 
   for (const path of possiblePaths) {
-    if (existsSync(path) && statSync(path).isFile()) {
-      return path;
-    }
-    // Check if it's a directory with index file
+    if (existsSync(path) && statSync(path).isFile()) return path;
     if (existsSync(path) && statSync(path).isDirectory()) {
       const indexPath = join(path, "index.md");
       if (existsSync(indexPath)) return indexPath;
@@ -111,31 +91,49 @@ function resolveInternalLink(
   return null;
 }
 
-describe("Internal Links", () => {
+function slugifyHeading(heading: string): string {
+  return heading
+    .replace(/[`*_~[\]()]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
+
+function getHeadingAnchors(file: string): Set<string> {
+  const content = stripCodeBlocks(readFileSync(file, "utf-8"));
+  const anchors = new Set<string>();
+
+  for (const match of content.matchAll(/^#{1,6}\s+(.+)$/gm)) {
+    anchors.add(slugifyHeading(match[1]));
+  }
+
+  return anchors;
+}
+
+describe("Links", () => {
   const docsDir = join(process.cwd(), "src/content/docs");
 
-  it("should have no broken internal markdown links", () => {
+  it("should have no broken internal Markdown or HTML links", () => {
     const files = getAllMarkdownFiles(docsDir);
-    const brokenLinks: Array<{
-      file: string;
-      link: string;
-      url: string;
-    }> = [];
+    const brokenLinks: Array<{ file: string; link: string; url: string }> = [];
 
     for (const file of files) {
       const content = readFileSync(file, "utf-8");
-      const links = extractMarkdownLinks(content);
 
-      for (const link of links) {
-        if (isInternalLink(link.url)) {
-          const resolvedPath = resolveInternalLink(link.url, file, docsDir);
-          if (!resolvedPath || !existsSync(resolvedPath)) {
-            brokenLinks.push({
-              file,
-              link: link.text,
-              url: link.url,
-            });
-          }
+      for (const link of extractLinks(content)) {
+        if (!isInternalLink(link.url)) continue;
+
+        const resolvedPath = resolveInternalLink(link.url, file, docsDir);
+        if (!resolvedPath || !existsSync(resolvedPath)) {
+          brokenLinks.push({ file, link: link.text, url: link.url });
+          continue;
+        }
+
+        const { anchor } = splitPathAndAnchor(link.url);
+        if (anchor && !getHeadingAnchors(resolvedPath).has(anchor)) {
+          brokenLinks.push({ file, link: link.text, url: link.url });
         }
       }
     }
@@ -149,23 +147,23 @@ describe("Internal Links", () => {
       );
     }
 
-    // Test passes if no broken links found
     expect(brokenLinks.length).toBe(0);
   });
 
-  it("should extract markdown links correctly", () => {
+  it("should extract Markdown and HTML links correctly", () => {
     const content = `
       [External Link](https://example.com)
       [Internal Link](./other-page.md)
-      [Anchor Link](#section)
-      [Relative Link](../guides/guide.md)
+      ![Image](./image.png)
+      <a href="/guides/data_ingestion/">Data ingestion</a>
     `;
 
-    const links = extractMarkdownLinks(content);
-    expect(links.length).toBe(4);
-    expect(links[0].text).toBe("External Link");
-    expect(links[0].url).toBe("https://example.com");
-    expect(links[1].url).toBe("./other-page.md");
+    const links = extractLinks(content);
+    expect(links).toEqual([
+      { text: "External Link", url: "https://example.com" },
+      { text: "Internal Link", url: "./other-page.md" },
+      { text: "HTML href", url: "/guides/data_ingestion/" },
+    ]);
   });
 
   it("should identify internal vs external links correctly", () => {
@@ -173,6 +171,7 @@ describe("Internal Links", () => {
     expect(isInternalLink("../guides/guide.md")).toBe(true);
     expect(isInternalLink("#section")).toBe(true);
     expect(isInternalLink("page.md")).toBe(true);
+    expect(isInternalLink("/guides/data_ingestion/")).toBe(true);
 
     expect(isInternalLink("https://example.com")).toBe(false);
     expect(isInternalLink("http://example.com")).toBe(false);

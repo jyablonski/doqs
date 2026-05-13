@@ -9,9 +9,11 @@ describe("Footer Component", () => {
   );
 
   it("should contain environment links", () => {
-    expect(footerContent).toContain("dev.example.dev");
-    expect(footerContent).toContain("test.example.dev");
-    expect(footerContent).toContain("prod.example.dev");
+    expect(footerContent).toContain("nbadashboard.jyablonski.dev");
+    expect(footerContent).toContain("api.jyablonski.dev");
+    expect(footerContent).toContain("doqs.jyablonski.dev");
+    expect(footerContent).not.toContain("example.dev");
+    expect(footerContent).not.toContain("example.com");
   });
 
   it('should have proper target="_blank" for external links', () => {
@@ -26,8 +28,8 @@ describe("Footer Component", () => {
     expect(footerContent).toContain("Pagination");
   });
 
-  it("should have both Label 1 and Label 2 tabs", () => {
-    expect(footerContent).toContain("Label 1");
-    expect(footerContent).toContain("Label 2");
+  it("should have app and repository tabs", () => {
+    expect(footerContent).toContain('label="Apps"');
+    expect(footerContent).toContain('label="Repos"');
   });
 });

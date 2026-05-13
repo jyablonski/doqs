@@ -1,4 +1,4 @@
-PHONY: up
+.PHONY: up
 up:
 	@npm run dev
 

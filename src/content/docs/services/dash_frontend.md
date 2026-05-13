@@ -1,7 +1,7 @@
 ---
 title: Dash Frontend
-description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-11-24
+description: Reference for the Dash dashboard service, pages, deployment, and CI/CD flow.
+lastUpdated: 2026-05-13
 author: jyablonski
 tags: ["service", "frontend", "python", "visualization"]
 ---
@@ -85,9 +85,9 @@ For continuous integration (CI), the entire test suite is run on every commit in
 
 After a PR is merged, the continuous deployment (CD) pipeline performs the following steps:
 
-1. Builds the Docker Image for the service which has the updated source code & dependencies
-2. Pushes the Docker Image to ECR
+1. Builds the Docker image for the service with the updated source code and dependencies
+2. Pushes the Docker image to ECR
 3. SSHs into the GCP VM to pull the new changes and restart the service
 
-> _Note:_  
+> _Note:_
 > For larger projects a more sophisticated deployment process would be ideal here like blue / green or a rolling deploy, but for the scale of this project a single VM works just fine for cost efficiency

@@ -1,7 +1,7 @@
 ---
 title: Twitter
-description: A guide in my new Starlight docs site.
-lastUpdated: 2025-11-24
+description: Notes on historical Twitter data ingestion and current platform limitations.
+lastUpdated: 2026-05-13
 author: jyablonski
 tags: ["data-source", "social-media", "deprecated"]
 ---
@@ -10,7 +10,7 @@ tags: ["data-source", "social-media", "deprecated"]
 This Data Source is no longer in use as of Q1 2025
 :::
 
-This page walks through Twitter as a Data Source for the NBA Project
+Twitter was previously used to capture NBA news and engagement signals, but the source is deprecated due to API pricing and access changes.
 
 ---
 
@@ -18,13 +18,13 @@ This page walks through Twitter as a Data Source for the NBA Project
 
 Twitter is a social media platform where users post and interact through short messages called tweets. It’s known for being fast-paced and real-time, making it a go-to platform for news, public discussions, and direct communication between people, brands, and organizations.
 
-Twitter is often where sports news breaks first—whether it’s trades, injuries, free agent signings, or coaching changes. Pulling this data and using it as a way to analyze user engagement and is a great way to develop social media trends & insights.
+Twitter is often where sports news breaks first, including trades, injuries, free agent signings, and coaching changes. Pulling this data helped analyze user engagement and develop social media trends and insights.
 
 Unfortunately, in June 2023 Elon completely removed the free-tier of the Twitter API, and made major changes to the Basic Plan that they previously offered. This effectively priced out indie developers and open source projects from scraping data via an API.
 
 ## Data Ingestion Process
 
-Tweepy was used to authenticate w/ the Twitter API and pull a mix of high engagement tweets from well-known sports journalists, as well as other random NBA-related tweets.
+Tweepy was used to authenticate with the Twitter API and pull a mix of high-engagement tweets from well-known sports journalists, as well as other NBA-related tweets.
 
 - Before Tweepy, some tweet data was manually scraped off the website and stored into a separate table
 - This data was joined together and transformed downstream in dbt
