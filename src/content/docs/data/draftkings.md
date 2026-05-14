@@ -1,12 +1,12 @@
 ---
 title: DraftKings
-description: A guide in my new Starlight docs site.
-lastUpdated: 2025-11-24
+description: Notes on DraftKings odds data, Covers scraping, and downstream storage.
+lastUpdated: 2026-05-13
 author: jyablonski
 tags: ["data-source", "nba", "betting", "web-scraping"]
 ---
 
-This page walks through DraftKings as a Data Source for the NBA Project
+DraftKings odds data provides moneyline and spread information for upcoming NBA games, scraped through Covers and stored for downstream analytics.
 
 ---
 
@@ -16,12 +16,12 @@ DraftKings is a digital sports entertainment and gaming company that offers dail
 
 - Their gambling odds are made available on a public site called https://covers.com, which is where this data is scraped for this project
 - Live odds, parlays, and total point over / under thresholds are **not** scraped in this project
-- Moneyline odds and the spread for each home & away team are scraped & stored
+- Moneyline odds and the spread for each home and away team are scraped and stored
 
 > _Note:_
 > The time of day in which the data is scraped is important, as during the games their content changes significantly and the odds turn into live odds
 
-For the NBA Project, data is scraped from this website once a day at 12pm UTC which is after gambling data has been updated & made available for that night's upcoming games.
+For the NBA Project, data is scraped from this website once a day at 12 pm UTC, after gambling data has been updated and made available for that night's upcoming games.
 
 ## Data Ingestion Process
 

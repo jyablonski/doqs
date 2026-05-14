@@ -31,10 +31,10 @@ The site will be available at `http://localhost:4321`.
 | `npm run dev`           | Start local dev server at `localhost:4321` |
 | `npm run build`         | Build production site to `./dist/`         |
 | `npm run preview`       | Preview production build locally           |
-| `npm run test`          | Run tests with Vitest                      |
+| `npm run test`          | Build the site, then run tests with Vitest |
 | `npm run test:watch`    | Run tests in watch mode                    |
 | `npm run test:ui`       | Run tests with Vitest UI                   |
-| `npm run test:coverage` | Run tests with coverage report             |
+| `npm run test:coverage` | Build the site, then run tests with coverage |
 
 ## Project Structure
 
@@ -95,4 +95,4 @@ graph TD
 
 ### Testing
 
-Tests are written with [Vitest](https://vitest.dev/) and cover content validation, link checking, and configuration. Run `npm run test:coverage` to generate a coverage report.
+Tests are written with [Vitest](https://vitest.dev/) and cover content validation, link checking, build output, and configuration. The test scripts build the site first so Starlight can validate internal links and the build-output tests can inspect fresh files. Run `npm run test:coverage` to generate a coverage report.

@@ -1,12 +1,12 @@
 ---
 title: Ingestion Script
-description: A reference page in my new Starlight docs site.
-lastUpdated: 2025-08-01
+description: Reference for the ingestion service, source extraction, storage, and CI/CD flow.
+lastUpdated: 2026-05-13
 author: jyablonski
 tags: ["service", "elt", "python", "web-scraping"]
 ---
 
-The Ingestion Script is responsible for all source data ingestion for the NBA ELT Project
+The Ingestion Script handles source data ingestion for the NBA ELT Project.
 
 ---
 
@@ -71,24 +71,24 @@ A feature flag table in the database is managed to support all different kinds o
 
 ## Production
 
-The Ingestion Script runs as an ECS Task which is kicked off by an AWS Step Functions Pipeline triggered at 12pm UTC everyday.
+The Ingestion Script runs as an ECS task kicked off by an AWS Step Functions pipeline triggered every day at 12 pm UTC.
 
 - The Ingestion Script typically takes about ~2 minutes to complete
 
-As soon as the script is finished & all ingestion data has been loaded, the dbt job is kicked off to begin the transformation process.
+As soon as the script finishes and all ingestion data has been loaded, the dbt job begins the transformation process.
 
 ## CI / CD
 
 For continuous integration (CI), the entire test suite is run on every commit in a pull request.
 
-- It installs uv & the project dependencies on the GitHub Actions runner
-- It uses Docker to spin up a Postgres database w/ bootstrap data
+- It installs uv and the project dependencies on the GitHub Actions runner
+- It uses Docker to spin up a Postgres database with bootstrap data
 - It then runs the test suite, using the Postgres database to run integration tests
 - The uv environment used by the GitHub Actions runners also gets cached for up to 7 days, enabling faster test suite executions
 
 After a PR is merged, the continuous deployment (CD) pipeline performs the following steps:
 
-1. Builds the Docker Image for the service which has the updated source code & dependencies
-2. Pushes the Docker Image to ECR
+1. Builds the Docker image for the service with the updated source code and dependencies
+2. Pushes the Docker image to ECR
 
-On the next subsequent NBA ELT Pipeline run, this new Docker Image will be used when the Ingestion Script is scheduled to be ran in ECS
+On the next NBA ELT Pipeline run, this new Docker image will be used when the Ingestion Script is scheduled in ECS.

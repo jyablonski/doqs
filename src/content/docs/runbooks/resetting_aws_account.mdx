@@ -1,7 +1,7 @@
 ---
 title: Resetting AWS Account
-description: A guide in my new Starlight docs site.
-lastUpdated: 2025-12-21
+description: Runbook for recreating AWS infrastructure when rotating to a new account.
+lastUpdated: 2026-05-13
 author: jyablonski
 tags: ["runbook", "aws", "terraform", "infrastructure"]
 ---
@@ -11,10 +11,10 @@ import { Steps } from "@astrojs/starlight/components";
 import route_53 from "../../../assets/route53.png";
 
 :::caution[Pending]
-This Runbook may not be needed in the future as the AWS Free Tier has [completely changed](https://aws.amazon.com/about-aws/whats-new/2025/07/aws-free-tier-credits-month-free-plan/) as of July 2025
+This runbook may not be needed in the future because the AWS Free Tier [changed significantly](https://aws.amazon.com/about-aws/whats-new/2025/07/aws-free-tier-credits-month-free-plan/) in July 2025.
 :::
 
-This page walks through how to reset the AWS Account used for the NBA Project. This process creates a new AWS Account with a new email address, deletes all resources in the old account, and then re-creates the infrastructure in the new account to workaround the 12 month limit on the AWS Free Tier.
+Resetting the AWS account recreates project infrastructure in a new account, migrates required source data, and reconnects deployment pipelines and DNS.
 
 ---
 
@@ -32,9 +32,9 @@ This page walks through how to reset the AWS Account used for the NBA Project. T
    1. Ensure all S3 Buckets are deleted before proceeding to the next step
       1. Either run `aws s3 rm s3://example-bucket --recursive` to remove all bucket contents, or manually press `Empty` on each bucket.
 4. Create new `example@gmail.com` email
-5. Create new AWS Account w/ new email
+5. Create a new AWS Account with a new email
 6. Add Root MFA onto new AWS Account
-7. Go to `Account` and enable IAM Policy for Billing Acces
+7. Go to `Account` and enable IAM Policy for Billing Access
 8. Create sign-in IAM User and grant it `AdministratorAccess` and `Billing` IAM Policies
 9. Add MFA onto sign-in user
 10. Create Access / Secret Keys for sign-in user
@@ -43,7 +43,7 @@ This page walks through how to reset the AWS Account used for the NBA Project. T
 13. Update Keys in Terraform Repo & Terraform Cloud
 14. Run `terraform apply` to build all infrastructure in New Account (1st run)
     - **NOTE** This will likely fail on ECS Services as the Docker Images are missing. They'll be added later
-15. Go to [Squarespace](https://account.squarespace.com/domains/managed/jyablonski.dev/dns/domain-nameservers) and update go to DNS -> Domain Nameservers, and update them based on the `NS` values in the Route 53 Hosted Zone
+15. Go to [Squarespace](https://account.squarespace.com/domains/managed/jyablonski.dev/dns/domain-nameservers), open DNS -> Domain Nameservers, and update them based on the `NS` values in the Route 53 Hosted Zone
     - <Image
         src={route_53}
         alt="AWS Route 53 Logo"
@@ -62,7 +62,7 @@ This page walks through how to reset the AWS Account used for the NBA Project. T
     4. [nba_elt_rest_api](https://github.com/jyablonski/nba_elt_rest_api)
     5. [nba_elt_mlflow](https://github.com/jyablonski/nba_elt_mlflow)
     6. [jyablonski_liquibase](https://github.com/jyablonski/jyablonski_liquibase)
-20. Run all CI / CD Pipelines to build & push the Docker Images for each service to ECR
+20. Run all CI / CD Pipelines to build and push the Docker images for each service to ECR
 21. Run `terraform apply` to build any remaining infrastructure in New Account (2nd run)
 22. Profit
 

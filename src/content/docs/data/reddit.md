@@ -1,12 +1,12 @@
 ---
 title: Reddit
-description: A guide in my new Starlight docs site.
-lastUpdated: 2025-11-24
+description: Notes on Reddit comment ingestion, enrichment, and sentiment analysis.
+lastUpdated: 2026-05-13
 author: jyablonski
 tags: ["data-source", "social-media", "api"]
 ---
 
-This page walks through Reddit as a Data Source for the NBA Project
+Reddit data captures NBA community discussion, post engagement, comment sentiment, and team flair signals for downstream analysis.
 
 ---
 
@@ -19,7 +19,7 @@ For the purposes of this project, data from https://reddit.com/r/nba is scraped 
 - Notably, Users can assign themselves a "Flair" which basically puts a team logo on their username whenever they comment or post in the subreddit
 - This flair data can be pulled and used to build out analytics downstream, as its a way of associating Reddit User's with their favorite team
 
-For the NBA Project, this social media data is scraped once a day at 12pm UTC to capture all of the engagement & buzz surrounding yesterday's games.
+For the NBA Project, this social media data is scraped once a day at 12 pm UTC to capture the engagement and buzz surrounding yesterday's games.
 
 ## Data Ingestion Process
 
@@ -34,7 +34,7 @@ After pulling the data, the [nltk](https://www.nltk.org/) Python Package is used
 - This process creates new Sentiment Analysis columns that are stored along every record
 - This enables interesting analytics insights to be found when grouping by Flair and by Average Sentiment (such as fanbases getting hyped after a big win, or becoming really negative after a bad loss)
 
-After the data has been pulled & enriched, it's stored into Pandas DataFrames and upserted into Postgres in the `bronze` Schema.
+After the data has been pulled and enriched, it's stored into Pandas DataFrames and upserted into Postgres in the `bronze` schema.
 
 ### Source Tables
 

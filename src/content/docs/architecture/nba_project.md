@@ -1,7 +1,7 @@
 ---
 title: NBA Project
-description: A guide in my new Starlight docs site.
-lastUpdated: 2025-11-24
+description: Overview of the NBA ELT platform architecture, services, data flow, and infrastructure.
+lastUpdated: 2026-05-13
 author: jyablonski
 tags: ["architecture", "aws", "infrastructure", "overview"]
 

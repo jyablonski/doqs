@@ -1,17 +1,17 @@
 {
-  "name": "",
+  "name": "doqs",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "test": "vitest run",
+    "test": "npm run build && vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "npm run build && vitest run --coverage"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.34.3",
@@ -21,7 +21,6 @@
     "starlight-links-validator": "^0.14.3"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^6.9.1",
     "@vitest/coverage-v8": "^2.1.9",
     "gray-matter": "^4.0.3",
     "vitest": "^2.1.0"

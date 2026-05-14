@@ -1,12 +1,12 @@
 ---
 title: Database User Permissions
-description: A guide in my new Starlight docs site.
-lastUpdated: 2025-12-21
+description: Guide to PostgreSQL user permissions, Terraform modules, and default privileges.
+lastUpdated: 2026-05-13
 author: jyablonski
 tags: ["guide", "database", "terraform", "security"]
 ---
 
-This page outlines how database user permissions are structured and managed in Postgres using Terraform.
+Database permissions are managed in Postgres with Terraform modules for databases, schemas, roles, grants, and future default privileges.
 
 ---
 
@@ -78,4 +78,4 @@ In Postgres, traditional `GRANT` statements only apply to tables or views that e
 
 Default Privileges are used to manage permissions for future objects, which automatically apply specified permissions to tables, views, and other objects created later within a schema.
 
-The Terraform Modules are setup to set both of these permission types when building out Schemas.
+The Terraform modules are set up to configure both permission types when building schemas.

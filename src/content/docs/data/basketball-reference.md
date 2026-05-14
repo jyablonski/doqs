@@ -1,12 +1,12 @@
 ---
 title: basketball-reference
-description: A guide in my new Starlight docs site.
-lastUpdated: 2025-11-24
+description: Notes on Basketball Reference source data, extracted tables, and data quality caveats.
+lastUpdated: 2026-05-13
 author: jyablonski
 tags: ["data-source", "nba", "web-scraping"]
 ---
 
-This page walks through basketball-reference as a Data Source for the NBA Project
+Basketball Reference is the primary source for NBA boxscores, play-by-play data, injuries, transactions, schedules, and team statistics used throughout the project.
 
 ---
 
@@ -16,7 +16,7 @@ Sports Reference is a renowned website that provides a comprehensive database of
 
 The NBA offers an official API which would normally be the preferred way of extracting this data, but the NBA blocks all AWS IP addresses from accessing its API. For this reason, basketball-reference is used to pull all NBA related data.
 
-For the NBA Project, data is scraped from this website once a day at 12pm UTC which is typically after data has been updated & made available for the previous day's games.
+For the NBA Project, data is scraped from this website once a day at 12 pm UTC, which is typically after data has been updated and made available for the previous day's games.
 
 ## Data Ingestion Process
 
@@ -50,10 +50,10 @@ After the data has been pulled, it's stored into Pandas DataFrames and upserted 
 1. Player names have historically been changed by basketball-reference mid-season, which caused issues downstream in dbt on joining & grouping boxscore data
 
    - For example, they started removing suffixes on names such as Robert Williams III -> Robert Williams
-   - There's also inconsistencies with how names are stored, such as:
+   - There are also inconsistencies with how names are stored, such as:
      - [JJ Redick](https://www.basketball-reference.com/players/r/redicjj01.html)
      - [J.J Barea](https://www.basketball-reference.com/players/b/bareajo01.html)
-   - Some of this I've tried to cleanup via various [helper functions](https://github.com/jyablonski/nba_elt_ingestion/blob/master/src/utils.py#L167), but it's still something to watchout for
+   - Some of this I've tried to clean up via various [helper functions](https://github.com/jyablonski/nba_elt_ingestion/blob/master/src/utils.py#L167), but it's still something to watch out for
 
 2. Boxscore & play-by-play data is sometimes not available at 12 pm UTC when the Ingestion Script runs.
 
