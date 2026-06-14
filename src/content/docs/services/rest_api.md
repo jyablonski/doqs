@@ -1,7 +1,7 @@
 ---
 title: REST API
 description: Reference for the REST API service, endpoints, authentication, deployment, and tests.
-lastUpdated: 2026-05-13
+lastUpdated: 2026-06-14
 author: jyablonski
 tags: ["service", "api", "python", "backend"]
 ---
@@ -110,12 +110,19 @@ All request logs are stored in AWS Cloudwatch, and traces are tracked via OpenTe
 
 ## CI / CD
 
-For continuous integration (CI), the entire test suite is run on every commit in a pull request using Docker.
+### Continuous Integration
 
-- Because the primary backend Database is Postgres, this enables comprehensive & performant testing
+The CI workflow runs on every pull request:
 
-After a PR is merged, the continuous deployment (CD) pipeline performs the following steps:
+- **Build & test** - A Dockerized test environment runs the full test suite against Postgres, enabling comprehensive and performant backend testing.
 
-1. Builds a `.ZIP` bundle containing the server's source code and dependencies.
-2. Stores the `.ZIP` bundle in S3.
-3. Updates the Lambda function with the new bundle.
+### Deployment
+
+Once a PR is merged, the deploy pipeline runs:
+
+1. **Re-run CI** to confirm the merged code is valid on the main branch.
+2. **Bundle build** - Builds a `.zip` bundle containing the server's source code and dependencies.
+3. **Artifact upload** - Stores the `.zip` bundle in S3.
+4. **Lambda update** - Updates the Lambda function with the new bundle.
+
+The updated Lambda function serves API traffic through CloudFront at https://api.jyablonski.dev.

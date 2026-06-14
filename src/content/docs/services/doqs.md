@@ -1,7 +1,7 @@
 ---
 title: Doqs
 description: Reference for the Doqs documentation site, Starlight setup, metadata, and deployment.
-lastUpdated: 2026-05-13
+lastUpdated: 2026-06-14
 author: jyablonski
 tags: ["service", "documentation", "frontend"]
 ---
@@ -77,13 +77,20 @@ Doqs is deployed to an S3 bucket with static website hosting enabled. A CloudFro
 
 ## CI / CD
 
-For continuous integration (CI), the entire test suite is run on every commit in a pull request.
+### Continuous Integration
 
-- This test suite includes a minimal amount of tests to verify specific features of the application work as expected
-- As part of the CI pipeline, the application is also built using `npm run build` to ensure any issues are caught before the PR can be merged
+Two checks run on every pull request:
 
-After a PR is merged, the continuous deployment (CD) pipeline performs the following steps:
+- **Test suite** - Vitest verifies the documentation content, metadata, links, and custom rendering behavior.
+- **Build & test** - The site is built with `npm run build` to catch Astro or Starlight issues before the PR can be merged.
 
-1. The project is built into a set of static HTML, CSS, and JS files in the `dist/` folder
-2. The `dist/` folder is then synced to an S3 bucket
-3. CloudFront automatically serves the updated content from the S3 bucket
+### Deployment
+
+Once a PR is merged, the deploy pipeline runs:
+
+1. **Re-run CI** to confirm the merged code is valid on the main branch.
+2. **Static site build** - Builds the project into static HTML, CSS, and JS files in the `dist/` folder.
+3. **S3 sync** - Syncs the `dist/` folder to the S3 bucket.
+4. **CloudFront** - Serves the updated content from the S3 bucket.
+
+The updated documentation site is available through the CloudFront distribution at https://doqs.jyablonski.dev.

@@ -1,7 +1,7 @@
 ---
 title: dbt
 description: Reference for the dbt project, medallion layers, packages, and test suite.
-lastUpdated: 2026-05-13
+lastUpdated: 2026-06-14
 author: jyablonski
 tags: ["nba", "elt", "transformations"]
 ---
@@ -77,7 +77,7 @@ In this project dbt enables dozens of different tables to be built by transformi
 - **Flexibility**: Intermediate tables and ML features can be built independently using standardized fact and dimension tables
 - **Performance**: Gold marts are pre-aggregated and optimized for fast query performance in downstream applications
 
-All of the data processing is done in dbt so that downstream applications just have to do a `select * from table` to grab what they need and serve the data to end users. This significantly improves the user experience and makes for a snappy, responsive feel across the REST API and Frontend Dashboard.
+All of the data processing is done in dbt so that downstream applications just have to do a `select * from table` to grab what they need and serve the data to end users.
 
 ## Libraries
 
@@ -89,20 +89,29 @@ All of the data processing is done in dbt so that downstream applications just h
 
 In production, dbt runs as an ECS task after the Ingestion Script completes. It runs `dbt build --target prod` to refresh all datasets and produce the model used by the ML Pipeline to generate win predictions.
 
-- The dbt job typically takes about ~2 minutes to complete
+- The dbt job typically takes fewer than 5 minutes to complete
+- Because of the volume of data and limited number of models, running the entire project at once fits the use case well and allows for a simple orchestration setup.
 
 As soon as the dbt job is completed, the ML Pipeline is kicked off to generate win predictions for upcoming games that day.
 
 ## CI / CD
 
-For continuous integration (CI), the entire test suite is run on every commit in a pull request using Docker.
+### Continuous Integration
 
-- This test suite builds the entire dbt project in a Postgres container running in Docker that has been bootstrapped with dummy source data
-- Although more than 400 dbt resources are built, this process takes less than 90 seconds because of the low volume of data
+Two checks run on every pull request:
 
-After a PR is merged, the continuous deployment (CD) pipeline performs the following steps:
+- **Code quality** — SQLFluff validates SQL formatting and style.
+- **Build & test** — A Postgres container is provisioned with bootstrapped data, then the full project is built to confirm every model and test passes. Completes in under 60 seconds.
 
-1. Builds the Docker image for the service with the updated source code and dependencies
-2. Pushes the Docker image to ECR
+### Deployment
 
-On the next NBA ELT Pipeline run, this new Docker image will be used when the dbt job is scheduled in ECS.
+Once a PR is merged, the deploy pipeline runs:
+
+1. **Re-run CI** to confirm the merged code is valid on the main branch.
+2. **Parallel jobs:**
+   - **Image build** — Builds the service's Docker image with the updated source and dependencies and pushes it to ECR.
+   - **Production build** — Pulls the latest S3 manifest from the previous deploy and uses that state to build any new or changed models in production.
+     - *Skip option:* Add the `SKIP_SLIM_CI` label to the PR to skip building changed models in production. The S3 manifest is still updated with the project's new state.
+   - **Docs** — Builds dbt Docs and deploys them to S3, served via CloudFront.
+
+The new image is picked up on the next scheduled NBA ELT Pipeline run, when the dbt job executes in ECS.

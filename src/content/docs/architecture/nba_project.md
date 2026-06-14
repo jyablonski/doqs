@@ -1,7 +1,7 @@
 ---
 title: NBA Project
 description: Overview of the NBA ELT platform architecture, services, data flow, and infrastructure.
-lastUpdated: 2026-05-13
+lastUpdated: 2026-06-14
 author: jyablonski
 tags: ["architecture", "aws", "infrastructure", "overview"]
 
@@ -120,7 +120,7 @@ curl -H "Accept: application/json" https://api.jyablonski.dev/v1/league/game_typ
 - Fully interactive with filtering and drill-down capabilities.
 - Hosted on free-tier resources and routed via Route 53 to https://nbadashboard.jyablonski.dev.
 
-<img src="https://github.com/user-attachments/assets/fe68e2a7-ea82-443b-bd9b-c0c6f155ad57" alt="Dashboard Screenshot" width="1400" height="600"/>
+![Dashboard Screenshot](../../../assets/dash_frontpage.png)
 
 ---
 
