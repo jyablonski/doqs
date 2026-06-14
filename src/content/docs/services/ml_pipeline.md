@@ -1,7 +1,7 @@
 ---
 title: ML Pipeline
 description: Reference for the ML pipeline, feature inputs, prediction outputs, and deployment.
-lastUpdated: 2026-05-13
+lastUpdated: 2026-06-14
 author: jyablonski
 tags: ["service", "ml", "python"]
 ---
@@ -89,11 +89,17 @@ The NBA ELT Pipeline is complete after the ML Pipeline finishes, with no further
 
 ## CI / CD
 
-For continuous integration (CI), the entire test suite is run on every commit in a pull request using Docker.
+### Continuous Integration
 
-After a PR is merged, the continuous deployment (CD) pipeline performs the following steps:
+The CI workflow runs on every pull request:
 
-1. Builds the Docker image for the service with the updated source code and dependencies
-2. Pushes the Docker image to ECR
+- **Build & test** - A Dockerized test environment runs the full test suite to validate model loading, feature handling, and database interactions.
+
+### Deployment
+
+Once a PR is merged, the deploy pipeline runs:
+
+1. **Re-run CI** to confirm the merged code is valid on the main branch.
+2. **Image build** - Builds the service's Docker image with the updated source and dependencies and pushes it to ECR.
 
 On the next NBA ELT Pipeline run, this new Docker image will be used when the ML Pipeline is scheduled in ECS.

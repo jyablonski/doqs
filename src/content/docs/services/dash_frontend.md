@@ -1,7 +1,7 @@
 ---
 title: Dash Frontend
 description: Reference for the Dash dashboard service, pages, deployment, and CI/CD flow.
-lastUpdated: 2026-05-13
+lastUpdated: 2026-06-14
 author: jyablonski
 tags: ["service", "frontend", "python", "visualization"]
 ---
@@ -75,19 +75,27 @@ Hover labels need to be manually configured for each plot. Here's an example of 
 The Dash Frontend is hosted in GCP on a forever free-tier VM which runs the service 24/7
 
 - This allows for a $0 / month hosting solution for the service
-- This was previously hosted on AWS using an ECS service with an EC2 Auto Scaling Group behind an Application Load Balancer, but [IPv4](https://aws.amazon.com/about-aws/whats-new/2024/02/aws-free-tier-750-hours-free-public-ipv4-addresses/) and AWS [free-tier changes](https://aws.amazon.com/about-aws/whats-new/2025/07/aws-free-tier-credits-month-free-plan/) have increased this cost to around $25 per month which is outside of my comfort range for long-term hosting, so I opted for this alternative hosting option.
+
+> _Note:_
+> This was previously hosted on AWS using an ECS service with an EC2 Auto Scaling Group behind an Application Load Balancer, but [IPv4](https://aws.amazon.com/about-aws/whats-new/2024/02/aws-free-tier-750-hours-free-public-ipv4-addresses/) and AWS [free-tier changes](https://aws.amazon.com/about-aws/whats-new/2025/07/aws-free-tier-credits-month-free-plan/) have increased this cost to around $25 per month which is outside of my comfort range for long-term hosting, so I opted for this alternative hosting option.
 
 Route 53 maps the https://nbadashboard.jyablonski.dev subdomain to the GCP VM's external IP, allowing the dashboard to be accessed via a custom domain across cloud environments.
 
 ## CI / CD
 
-For continuous integration (CI), the entire test suite is run on every commit in a pull request using Docker.
+### Continuous Integration
 
-After a PR is merged, the continuous deployment (CD) pipeline performs the following steps:
+Two checks run on every pull request:
 
-1. Builds the Docker image for the service with the updated source code and dependencies
-2. Pushes the Docker image to ECR
-3. SSHs into the GCP VM to pull the new changes and restart the service
+- **Code quality** - Ruff and Ty validate formatting, linting, and type correctness.
+- **Build & test** - The test suite runs unit tests and integration tests with testcontainers to validate application behavior and Postgres integration.
 
-> _Note:_
-> For larger projects a more sophisticated deployment process would be ideal here like blue / green or a rolling deploy, but for the scale of this project a single VM works just fine for cost efficiency
+### Deployment
+
+Once a PR is merged, the deploy pipeline runs:
+
+1. **Re-run CI** to confirm the merged code is valid on the main branch.
+2. **Image build** - Builds the service's Docker image with the updated source and dependencies and pushes it to ECR.
+3. **VM deploy** - SSHs into the GCP VM, pulls the latest application changes, and restarts the service.
+
+The restarted VM service serves the updated dashboard at https://nbadashboard.jyablonski.dev.

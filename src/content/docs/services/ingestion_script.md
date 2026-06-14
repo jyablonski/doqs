@@ -1,7 +1,7 @@
 ---
 title: Ingestion Script
 description: Reference for the ingestion service, source extraction, storage, and CI/CD flow.
-lastUpdated: 2026-05-13
+lastUpdated: 2026-06-14
 author: jyablonski
 tags: ["service", "elt", "python", "web-scraping"]
 ---
@@ -79,16 +79,18 @@ As soon as the script finishes and all ingestion data has been loaded, the dbt j
 
 ## CI / CD
 
-For continuous integration (CI), the entire test suite is run on every commit in a pull request.
+### Continuous Integration
 
-- It installs uv and the project dependencies on the GitHub Actions runner
-- It uses Docker to spin up a Postgres database with bootstrap data
-- It then runs the test suite, using the Postgres database to run integration tests
-- The uv environment used by the GitHub Actions runners also gets cached for up to 7 days, enabling faster test suite executions
+Two checks run on every pull request:
 
-After a PR is merged, the continuous deployment (CD) pipeline performs the following steps:
+- **Code quality** - The quality workflow validates code standards before the PR can be merged.
+- **Build & test** - GitHub Actions installs uv and the project dependencies, provisions a Dockerized Postgres database with bootstrap data, and runs the full test suite with integration coverage.
 
-1. Builds the Docker image for the service with the updated source code and dependencies
-2. Pushes the Docker image to ECR
+### Deployment
+
+Once a PR is merged, the deploy pipeline runs:
+
+1. **Re-run CI** to confirm the merged code is valid on the main branch.
+2. **Image build** - Builds the service's Docker image with the updated source and dependencies and pushes it to ECR.
 
 On the next NBA ELT Pipeline run, this new Docker image will be used when the Ingestion Script is scheduled in ECS.

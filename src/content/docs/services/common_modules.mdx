@@ -1,7 +1,7 @@
 ---
 title: Common Modules
 description: Reference for the shared Python package used across NBA ELT services.
-lastUpdated: 2026-05-13
+lastUpdated: 2026-06-14
 author: jyablonski
 tags: ["service", "python", "library"]
 ---
@@ -61,9 +61,18 @@ __all__ = ["create_sql_engine", "write_to_sql_upsert"]
 
 ## CI / CD
 
-For continuous integration (CI), the entire test suite is run on every commit in a pull request using Docker.
+### Continuous Integration
 
-After a PR is merged, the continuous deployment (CD) pipeline performs the following steps:
+The CI workflow runs on every pull request:
 
-1. Builds the library and generates platform-specific wheels
-2. Publishes the new version and wheels to PyPI
+- **Build & test** - A Dockerized test environment runs the full test suite against Postgres to validate the shared SQL and AWS helpers used by downstream services.
+
+### Deployment
+
+Once a PR is merged, the deploy pipeline runs:
+
+1. **Re-run CI** to confirm the merged code is valid on the main branch.
+2. **Package build** - Builds the library distribution and generates platform-specific wheels.
+3. **PyPI publish** - Publishes the new version and wheels to PyPI.
+
+Downstream services can pick up the published package version in their next dependency update.
